@@ -226,7 +226,7 @@ const BackgroundMotion: React.FC = () => {
   const dur = BASE_GEAR_DURATIONS.map((base) => base / (0.4 + speed));
 
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <motion.div
         className="absolute inset-0"
         style={{
@@ -292,7 +292,7 @@ const BackgroundMotion: React.FC = () => {
           />
         </motion.div>
       ))}
-{[...Array(6)].map((_, i) => (
+      {[...Array(6)].map((_, i) => (
         // Outer rotating ring (speed-reactive)
         <motion.div
           key={`ring-${i}`}
@@ -310,7 +310,7 @@ const BackgroundMotion: React.FC = () => {
           </motion.div>
         </motion.div>
       ))}
-<motion.div
+      <motion.div
         className="absolute inset-0 opacity-[0.05]"
         style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.9) 1px, transparent 1px)", backgroundSize: "10px 10px" }}
         animate={{ opacity: [0.03, 0.07, 0.04, 0.05], x: [0, -20, 10, 0], y: [0, 12, -12, 0] }}
@@ -344,8 +344,12 @@ const EdgeArrows: React.FC = () => (
   </motion.div>
 );
 
-/** ---------- Flying badge (already matches your left↔right requirement) ---------- */
-const FlyingBadge: React.FC<{ sectionOrder: string[] }> = ({ sectionOrder }) => {
+/** ---------- Flying badge (toggle: moving <-> dropped) ---------- */
+const FlyingBadge: React.FC<{
+  sectionOrder: string[];
+  dropped?: boolean;
+  onToggle?: () => void;
+}> = ({ sectionOrder, dropped = false, onToggle }) => {
   const leftX = "-44vw";   // vornato
   const rightX = "44vw";   // vornato
 
@@ -428,21 +432,37 @@ const FlyingBadge: React.FC<{ sectionOrder: string[] }> = ({ sectionOrder }) => 
 
   const currentKey = sectionOrder[currentIdx] || "hero";
 
+  // Positioning depending on state
+  const containerClass = dropped
+    ? "fixed left-1/2 bottom-6 z-30 -translate-x-1/2"
+    : "fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2";
+
   return (
-    <motion.div
-      className="pointer-events-none fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2"
-      style={{ x }}
-    >
-      <motion.div
-        style={{ rotate, scale }}
-        className="relative h-36 w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
+    <div className={containerClass}>
+      <motion.button
+        type="button"
+        aria-label={dropped ? "Resume floating" : "Drop badge"}
+        title={dropped ? "Click to resume floating" : "Click to drop here"}
+        onClick={onToggle}
+        className="pointer-events-auto focus:outline-none"
+        // When dropped: hold still with a tiny idle pulse. When floating: follow transforms.
+        style={dropped ? undefined : { x }}
+        animate={dropped ? { y: 0, rotate: 0, scale: 1 } : undefined}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
-        <div className="select-none text-2xl font-black tracking-widest mix-blend-screen text-white">
-          {labels[currentKey]}
-        </div>
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
-      </motion.div>
-    </motion.div>
+        <motion.div
+          // Rotate/scale only when not dropped
+          style={dropped ? undefined : { rotate, scale }}
+          className="relative h-36 w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
+          whileTap={{ scale: 0.96 }}
+        >
+          <div className="select-none text-2xl font-black tracking-widest mix-blend-screen text-white">
+            {labels[currentKey]}
+          </div>
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
+        </motion.div>
+      </motion.button>
+    </div>
   );
 };
 
@@ -463,6 +483,9 @@ function posterPlaceholder({ label, orientation = "horizontal" }: { label: strin
 
 export default function LevaniPortfolio() {
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
+
+  // NEW: state to control the badge toggle
+  const [badgeDropped, setBadgeDropped] = useState(false);
 
   // --- Runtime tests (cheap sanity checks) ---
   useEffect(() => {
@@ -490,7 +513,7 @@ export default function LevaniPortfolio() {
   };
 
   return (
-    <main id="top" className="min-h-screen w-full text-white snap-y snap-mandatory">
+    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory">
       {/* Background (modern motion scene) */}
       <BackgroundMotion />
 
@@ -560,8 +583,12 @@ export default function LevaniPortfolio() {
         </div>
       </section>
 
-      {/* Moving section icon */}
-      <FlyingBadge sectionOrder={[...sectionOrder]} />
+      {/* Moving/Droppable section icon */}
+      <FlyingBadge
+        sectionOrder={[...sectionOrder]}
+        dropped={badgeDropped}
+        onToggle={() => setBadgeDropped((v) => !v)}
+      />
 
       {/* SECTIONS */}
       <Section id="casino" title="Casino" subtitle="Trailers, promos, bumpers and motion graphics for casino brands." badge="Portfolio"> {/* vornato */}
@@ -685,7 +712,7 @@ export default function LevaniPortfolio() {
             className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
           >
             <img
-              src="/youtube-cover.jpg" // vornato: drop your cover into /public as youtube-cover.jpg|png|webp
+              src={`${import.meta.env.BASE_URL}youtube-cover.jpg`}
               alt="YouTube channel cover"
               className="w-full aspect-[16/6] object-cover rounded-xl"
             />
