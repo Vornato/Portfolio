@@ -4,5 +4,6 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+  base: "/portfolio/", // ⬅ change this to your exact repo name
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 });
