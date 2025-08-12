@@ -25,9 +25,8 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 
 // vornato: Small YouTube avatar (compact & crisp)
-// vornato: Small YouTube avatar (local copy in /public/)
-const YT_AVATAR_URL = "/vornato-avatar.jpg"; // place vornato-avatar.jpg in public/
-
+const YT_AVATAR_URL =
+  "https://yt3.googleusercontent.com/ytc/AIdro_kf3xJ6bywZg1fV9tYBQuFrMhlQmycMOk5MYPxwLQ=s800-c-k-c0x00ffffff-no-rj"; // vornato
 
 // vornato: Quick contact chips (top on mobile)
 const quickLinks = [
@@ -164,53 +163,40 @@ const BASE_GEAR_DURATIONS = [36, 28, 22]; // seconds for gear 1/2/3 when idle
 
 function useScrollSpeed() {
   // Returns a factor between ~0.12 (idle) and ~1.0 (fast scroll)
-  const [speed, setSpeed] = React.useState(0.12);
-  const last = React.useRef({ y: 0, t: performance.now() });
-  const decayTimer = React.useRef<number | null>(null);
+  const [speed, setSpeed] = useState(0.12);
+  const last = useRef({ y: 0, t: performance.now() });
+  const decayRef = useRef<number | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
       const t = performance.now();
       const dy = Math.abs(y - last.current.y);
       const dt = Math.max(16, t - last.current.t);
       last.current = { y, t };
+      // Normalize: ~dy per ms → scale
+      const instant = Math.min(1, (dy / dt) / 2); // adjust divisor for sensitivity
+      setSpeed((prev) => Math.max(instant, prev)); // spike up quickly
 
-      // Spike quickly based on instantaneous scroll velocity
-      const instant = Math.min(1, (dy / dt) / 2);
-      setSpeed((s) => Math.max(instant, s));
-
-      // Start a gentle decay at ~8 fps (throttled)
-      if (decayTimer.current == null) {
-        decayTimer.current = window.setInterval(() => {
-          setSpeed((s) => {
-            const next = s * 0.85 + 0.018; // tends toward ~0.12
-            if (next <= 0.121) {
-              if (decayTimer.current) {
-                clearInterval(decayTimer.current);
-                decayTimer.current = null;
-              }
-              return 0.12;
-            }
-            return next;
-          });
-        }, 120); // ~8 fps
-      }
+      if (decayRef.current) cancelAnimationFrame(decayRef.current);
+      const decay = () => {
+        setSpeed((prev) => {
+          const next = prev * 0.92 + 0.012; // smooth exponential decay to ~0.12
+          return next < 0.12 ? 0.12 : next;
+        });
+        decayRef.current = requestAnimationFrame(decay);
+      };
+      decayRef.current = requestAnimationFrame(decay);
     };
-
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      if (decayTimer.current) {
-        clearInterval(decayTimer.current);
-        decayTimer.current = null;
-      }
+      if (decayRef.current) cancelAnimationFrame(decayRef.current);
     };
   }, []);
 
   return speed;
 }
-
 
 const GearSVG: React.FC<{ size: number; teeth?: number; stroke?: string }> = ({ size, teeth = 8, stroke = "rgba(153,153,255,0.55)" }) => {
   const r = size / 2;
@@ -527,7 +513,7 @@ export default function LevaniPortfolio() {
   };
 
   return (
-    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory bg-[#0B0B13]">
+    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory">
       {/* Background (modern motion scene) */}
       <BackgroundMotion />
 
@@ -713,61 +699,40 @@ export default function LevaniPortfolio() {
       </Section>
 
       <Section id="contact" title="Contact" subtitle="Let’s build something bold."> {/* vornato */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-      <a
-        href="mailto:levaniesitashvili1999@gmail.com"
-        className="flex items-center gap-3 text-zinc-200 hover:underline"
-      >
-        ✉️ levaniesitashvili1999@gmail.com
-      </a> {/* vornato */}
-    </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+            <div className="flex items-center gap-3 text-zinc-200">✉️ levaniesitashvili1999@gmail.com</div> {/* vornato */}
+          </div>
 
-    {/* YouTube channel card (optional extra) */}
-    <a
-      href="https://youtube.com/@vornatoofficial" // vornato
-      target="_blank"
-      rel="noopener noreferrer"
-      className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
-    >
-      <img
+          {/* YouTube channel card (optional extra) */}
+          <a
+            href="https://youtube.com/@vornatoofficial" // vornato
+            target="_blank"
+            rel="noreferrer"
+            className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
+          >
+            <img
   src="/youtube-cover.png" // file in public/
   alt="YouTube channel cover"
   className="w-full aspect-[16/6] object-cover rounded-xl"
   loading="lazy"
 />
 
+            <Button className="rounded-2xl">YouTube Channel</Button>
+          </a>
 
-      <Button className="rounded-2xl">YouTube Channel</Button>
-    </a>
-
-    {/* Contact form that opens mail client */}
-    <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-      <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
-        <input
-          name="name"
-          placeholder="Your name"
-          className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
-        /> {/* vornato */}
-        <input
-          name="contact"
-          placeholder="Email or Telegram"
-          className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
-        /> {/* vornato */}
-        <textarea
-          name="message"
-          placeholder="Project details"
-          className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]"
-        /> {/* vornato */}
-        <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
-      </form>
-      <p className="mt-3 text-xs text-zinc-400">
-        Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.
-      </p>
-    </div>
-  </div>
-</Section>
-
+          {/* Contact form that opens mail client */}
+          <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+            <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
+              <input name="name" placeholder="Your name" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
+              <input name="contact" placeholder="Email or Telegram" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
+              <textarea name="message" placeholder="Project details" className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]" /> {/* vornato */}
+              <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
+            </form>
+            <p className="mt-3 text-xs text-zinc-400">Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.</p>
+          </div>
+        </div>
+      </Section>
 
       <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">© {new Date().getFullYear()} Levani Esitashvili — Portfolio</footer> {/* vornato */}
 
