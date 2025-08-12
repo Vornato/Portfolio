@@ -7,9 +7,8 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "build": "react-router build",
-    "predeploy": "npm run build && node scripts/generate404.cjs",
+    "predeploy": "npm run build && node scripts/generate-static.mjs",
     "deploy": "gh-pages -d build/client"
-
   },
   "dependencies": {
     "@react-router/node": "^7.7.1",
