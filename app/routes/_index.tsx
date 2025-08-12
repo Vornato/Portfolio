@@ -1,7 +1,11 @@
 // Updated with // vornato comments for easy editing
 // All editable text, links, images, and video sources now marked with // vornato
 
+<<<<<<< HEAD
 import React, { useEffect, useState, useRef } from "react";
+=======
+import React, { useEffect, useMemo, useState } from "react";
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
 import { motion, useScroll, useTransform } from "framer-motion";
 
 // --- Minimal UI components (kept in-file so the project works standalone) ---
@@ -22,11 +26,15 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 
 // ==================== CONFIG you can change ====================
 // vornato: Your photo URL
+<<<<<<< HEAD
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 
 // vornato: Small YouTube avatar (compact & crisp)
 const YT_AVATAR_URL =
   "https://yt3.googleusercontent.com/ytc/AIdro_kf3xJ6bywZg1fV9tYBQuFrMhlQmycMOk5MYPxwLQ=s800-c-k-c0x00ffffff-no-rj"; // vornato
+=======
+const PHOTO_URL = "https://placehold.co/640x800/png?text=Levani+Photo"; // vornato
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
 
 // vornato: Quick contact chips (top on mobile)
 const quickLinks = [
@@ -34,6 +42,7 @@ const quickLinks = [
   { label: "+995 595 55 14 05", href: "tel:+995595551405" }, // vornato
   { label: "YouTube: VorNato", href: "https://youtube.com/@vornatoofficial" }, // vornato
   { label: "Behance: vornato", href: "https://www.behance.net/vornato" }, // vornato
+<<<<<<< HEAD
   { label: "Fiverr", href: "https://www.fiverr.com/sellers/vornatoofficial" }, // vornato
   { label: "Upwork", href: "https://www.upwork.com/freelancers/~012da965c61594d259" }, // vornato
 ];
@@ -108,6 +117,40 @@ const fantasyItems: PortfolioItem[] = [
 
 // vornato: Toggle or re-order sections here (Events between Sports and Slots)
 const sectionOrder = ["hero","casino","sports","events","slots","youtube","fiverr","fantasy","experience","contact"] as const; // vornato
+=======
+  { label: "Fiverr", href: "https://www.fiverr.com/" }, // vornato
+  { label: "Upwork", href: "https://www.upwork.com/" }, // vornato
+];
+
+// vornato: Portfolio items per section (9:16 for casino/sports/fantasy, 16:9 for youtube/fiverr)
+const casinoItems = [
+  { title: "Casino motion videos (Aviator/Mines/Slots)", tag: "Casino", thumb: "https://placehold.co/600x1067/jpg?text=Casino+Motion+9x16", href: "https://www.behance.net/gallery/206051599/Casino-motion-videos-for-Aviator-Mines-Slots", orientation: "vertical" }, // vornato
+  { title: "Casino Logo Animation (Elements 3D)", tag: "Casino", thumb: "https://placehold.co/600x1067/jpg?text=Logo+Animation+9x16", href: "https://www.behance.net/gallery/203888677/Casino-Logo-Animation-%28-Elements-3D-%29", orientation: "vertical" }, // vornato
+];
+const sportsItems = [
+  { title: "Sport Poster Designs", tag: "Sports", thumb: "https://placehold.co/600x1067/jpg?text=Sports+9x16", href: "https://www.behance.net/gallery/172080181/Sport-Poster-Designs-%28Football-Basketball-etc%29", orientation: "vertical" }, // vornato
+  { title: "Cinematic Trailer Videos For Sport", tag: "Sports", thumb: "https://placehold.co/600x1067/jpg?text=Cinematic+9x16", href: "https://www.behance.net/gallery/157824179/Cinematic-Trailer-Videos-For-Sport", orientation: "vertical" }, // vornato
+  { title: "Cricket Lottery Promos", tag: "Sports", thumb: "https://placehold.co/600x1067/jpg?text=Cricket+9x16", href: "https://www.behance.net/gallery/166143603/Thrilling-Summer-Cricket-Lottery-Videos", orientation: "vertical" }, // vornato
+];
+const slotsItems = [
+  { title: "Slot Games Portfolio", tag: "Slots", thumb: "https://placehold.co/600x1067/jpg?text=Slots+9x16", href: "https://www.behance.net/gallery/151894049/Slot-Games-Portfolio", orientation: "vertical" }, // vornato
+];
+const youtubeItems = [
+  // vornato: Replace embedId with your actual video IDs
+  { title: "Channel Intro", tag: "YouTube", thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg", provider: "youtube", embedId: "dQw4w9WgXcQ", orientation: "horizontal" }, // vornato
+  { title: "Edit Breakdown", tag: "YouTube", thumb: "https://img.youtube.com/vi/oHg5SJYRHA0/hqdefault.jpg", provider: "youtube", embedId: "oHg5SJYRHA0", orientation: "horizontal" }, // vornato
+];
+const fiverrItems = [
+  { title: "Unboxing video samples (Fiverr)", tag: "Fiverr", thumb: "https://placehold.co/800x450/jpg?text=Unboxing+Samples", href: "https://www.behance.net/gallery/143654417/Unboxing-video-samples-for-Fiverr", orientation: "horizontal" }, // vornato
+];
+const fantasyItems = [
+  { title: "Fantasy Game Teaser", tag: "Fantasy", thumb: "https://placehold.co/600x1067/jpg?text=Fantasy+9x16", href: "#", orientation: "vertical" }, // vornato
+  { title: "Mythic Arena Trailer", tag: "Fantasy", thumb: "https://placehold.co/600x1067/jpg?text=Arena+9x16", href: "#", orientation: "vertical" }, // vornato
+];
+
+// vornato: Toggle or re-order sections here
+const sectionOrder = ["hero","casino","sports","slots","youtube","fiverr","fantasy","experience","contact"] as const; // vornato
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
 
 // ==================== Helper Components ====================
 const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({ id, title, subtitle, badge, children }) => (
@@ -126,6 +169,7 @@ const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: 
   </section>
 );
 
+<<<<<<< HEAD
 // Poster image helper
 const Poster: React.FC<{ item: PortfolioItem }> = ({ item }) => (
   <img
@@ -137,6 +181,9 @@ const Poster: React.FC<{ item: PortfolioItem }> = ({ item }) => (
 
 // Grid
 const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: PortfolioItem) => void }> = ({ items, onSelect }) => (
+=======
+const PortfolioGrid: React.FC<{ items: any[]; onSelect?: (item: any) => void }> = ({ items, onSelect }) => (
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {items.map((it, i) => (
       <button
@@ -144,7 +191,15 @@ const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: Portfo
         onClick={() => (onSelect ? onSelect(it) : window.open(it.href || "#", "_blank"))}
         className="group relative overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-zinc-800 hover:ring-zinc-600 transition text-left"
       >
+<<<<<<< HEAD
         <Poster item={it} />
+=======
+        <img
+          src={it.thumb}
+          alt={it.title}
+          className={`w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100 ${it.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"}`}
+        />
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-0 p-4">
           <div className="flex items-center gap-2 text-zinc-200">
@@ -157,6 +212,7 @@ const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: Portfo
   </div>
 );
 
+<<<<<<< HEAD
 /** ---------- Dynamic Background (gears + shapes that react to scroll) ---------- */
 // vornato: tweak these if you want the gears faster/slower by default
 const BASE_GEAR_DURATIONS = [36, 28, 22]; // seconds for gear 1/2/3 when idle
@@ -419,6 +475,54 @@ const FlyingBadge: React.FC<{
   };
 
   const [currentIdx, setCurrentIdx] = React.useState(0);
+=======
+// Flying badge that travels far-left ↔ far-right in an arc and swaps icons per section
+const FlyingBadge: React.FC<{ sectionOrder: string[] }> = ({ sectionOrder }) => {
+  const leftX = "-45vw";   // vornato: change distance from left edge
+  const rightX = "45vw";   // vornato: change distance from right edge
+  const arcY = 12;         // vornato: arc height in % (increase for more dramatic swoop)
+
+  const steps = Math.max(1, sectionOrder.length - 1);
+  const input: number[] = [];
+  const xVals: (string | number)[] = [];
+  const yVals: (string | number)[] = [];
+  const rotVals: number[] = [];
+
+  for (let i = 0; i < sectionOrder.length; i++) {
+    const tStart = i / steps;
+    input.push(tStart);
+    xVals.push(i % 2 === 0 ? leftX : rightX);
+    yVals.push("0%");
+    rotVals.push(180 * i);
+    if (i < steps) {
+      const tMid = (i + 0.5) / steps;
+      input.push(tMid);
+      xVals.push("0vw");
+      yVals.push(`${i % 2 === 0 ? -arcY : arcY}%`);
+      rotVals.push(180 * i + 90);
+    }
+  }
+
+  const { scrollYProgress } = useScroll();
+  const x = useTransform(scrollYProgress, input, xVals as any);
+  const y = useTransform(scrollYProgress, input, yVals as any);
+  const rotate = useTransform(scrollYProgress, input, rotVals);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
+
+  const labels: Record<string, React.ReactNode> = {
+    hero: <span className="text-[#9999FF]">Ae</span>, // vornato (icon on HERO)
+    casino: <span>🎲</span>, // vornato (Casino)
+    sports: <span>🏆</span>, // vornato (Sports)
+    slots: <span>✨</span>, // vornato (Slots)
+    youtube: <span>▶️</span>, // vornato (YouTube)
+    fiverr: <span>💼</span>, // vornato (Fiverr)
+    fantasy: <span>🎮</span>, // vornato (Fantasy)
+    experience: <span>🎬</span>, // vornato (Experience)
+    contact: <span>✉️</span>, // vornato (Contact)
+  };
+
+  const [currentIdx, setCurrentIdx] = useState(0);
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
   useEffect(() => {
     const onScroll = () => {
       const h = window.innerHeight || 1;
@@ -432,6 +536,7 @@ const FlyingBadge: React.FC<{
 
   const currentKey = sectionOrder[currentIdx] || "hero";
 
+<<<<<<< HEAD
   // Positioning depending on state
   const containerClass = dropped
     ? "fixed left-1/2 bottom-6 z-30 -translate-x-1/2"
@@ -486,11 +591,28 @@ export default function LevaniPortfolio() {
 
   // NEW: state to control the badge toggle
   const [badgeDropped, setBadgeDropped] = useState(false);
+=======
+  return (
+    <motion.div className="pointer-events-none fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2" style={{ x, y }}>
+      <motion.div style={{ rotate, scale }} className="relative h-36 w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur">
+        <div className="select-none text-2xl font-black tracking-widest mix-blend-screen text-white">
+          {labels[currentKey]}
+        </div>
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default function LevaniPortfolio() {
+  const [selected, setSelected] = useState<any | null>(null);
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
 
   // --- Runtime tests (cheap sanity checks) ---
   useEffect(() => {
     console.assert(typeof (motion as any) !== "undefined", "framer-motion 'motion' should be defined");
     const expected = sectionOrder.length;
+<<<<<<< HEAD
     console.assert(expected === 10, `Expected 10 waypoints, found ${expected}`);
     console.assert(Array.isArray(casinoItems) && casinoItems.length > 0, "casinoItems should be defined with items");
     console.assert(Array.isArray(sportsItems) && sportsItems.length > 0, "sportsItems should be defined with items");
@@ -516,6 +638,21 @@ export default function LevaniPortfolio() {
     <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory">
       {/* Background (modern motion scene) */}
       <BackgroundMotion />
+=======
+    console.assert(expected === 9, `Expected 9 waypoints, found ${expected}`);
+    const vOk = (o?: string) => !o || o === "vertical" || o === "horizontal";
+    console.assert(vOk("vertical") && vOk("horizontal"), "Orientation enum should be vertical|horizontal");
+  }, []);
+
+  return (
+    <main id="top" className="min-h-screen w-full bg-gradient-to-b from-[#0B0B13] via-[#0E0E18] to-[#0B0B13] text-white snap-y snap-mandatory">
+      {/* Background (minimal animated blobs) */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <motion.div className="absolute -top-40 -left-40 h-[60vmax] w-[60vmax] rounded-full bg-gradient-to-br from-violet-700/10 to-cyan-500/10 blur-3xl" animate={{ x: [0, 50, -30, 0], y: [0, -20, 40, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.div className="absolute -bottom-40 -right-40 h-[50vmax] w-[50vmax] rounded-full bg-gradient-to-tr from-cyan-400/10 to-emerald-500/10 blur-3xl" animate={{ x: [0, -40, 20, 0], y: [0, 30, -30, 0] }} transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 1px)", backgroundSize: "12px 12px" }} animate={{ opacity: [0.02, 0.06, 0.03] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
+      </div>
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
 
       {/* NAV */}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60 bg-zinc-900/70 border-b border-zinc-800">
@@ -524,7 +661,10 @@ export default function LevaniPortfolio() {
           <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-300">
             <a href="#casino" className="hover:text-white">Casino</a>
             <a href="#sports" className="hover:text-white">Sports</a>
+<<<<<<< HEAD
             <a href="#events" className="hover:text-white">Events & Clubs</a> {/* vornato */}
+=======
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
             <a href="#slots" className="hover:text-white">Slots</a>
             <a href="#youtube" className="hover:text-white">YouTube</a>
             <a href="#fiverr" className="hover:text-white">Fiverr</a>
@@ -544,6 +684,7 @@ export default function LevaniPortfolio() {
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center w-full">
+<<<<<<< HEAD
           {/* Photo card with "Click it" + edge arrows */}
           <div className="relative">
             <a
@@ -564,6 +705,14 @@ export default function LevaniPortfolio() {
                 <span className="rounded-full bg-black/70 text-white text-xs px-3 py-1 ring-1 ring-white/20 shadow-lg">Click it</span> {/* vornato */}
               </motion.div>
             </a>
+=======
+          <div className="relative">
+            <div className="relative overflow-hidden rounded-3xl ring-1 ring-zinc-800">
+              <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover" />
+              {/* vornato: replace PHOTO_URL above */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
+            </div>
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
             <div className="mt-4 flex flex-wrap gap-2">
               {["Senior Video Editor", "After Effects / Premiere Pro", "Casino • Sports • Slots", "Social Cutdowns"].map((chip) => (
                 <Badge key={chip} className="rounded-full bg-zinc-900 text-zinc-200 ring-1 ring-zinc-800">{chip}</Badge>
@@ -572,9 +721,13 @@ export default function LevaniPortfolio() {
           </div>
           <div>
             <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight">Video Editor & After Effects Specialist</h1> {/* vornato */}
+<<<<<<< HEAD
             <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">
               I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
             </p> {/* vornato */}
+=======
+            <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.</p> {/* vornato */}
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
             <div className="mt-6 flex flex-wrap gap-3">
               <a href="#casino"><Button className="rounded-2xl">View Work</Button></a> {/* vornato */}
               <a href="#contact"><Button variant="secondary" className="rounded-2xl">Hire Me</Button></a> {/* vornato */}
@@ -583,12 +736,17 @@ export default function LevaniPortfolio() {
         </div>
       </section>
 
+<<<<<<< HEAD
       {/* Moving/Droppable section icon */}
       <FlyingBadge
         sectionOrder={[...sectionOrder]}
         dropped={badgeDropped}
         onToggle={() => setBadgeDropped((v) => !v)}
       />
+=======
+      {/* Flying badge */}
+      <FlyingBadge sectionOrder={[...sectionOrder]} />
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
 
       {/* SECTIONS */}
       <Section id="casino" title="Casino" subtitle="Trailers, promos, bumpers and motion graphics for casino brands." badge="Portfolio"> {/* vornato */}
@@ -597,6 +755,7 @@ export default function LevaniPortfolio() {
 
       <Section id="sports" title="Sports" subtitle="Odds reels, hype edits, and event highlights."> {/* vornato */}
         <PortfolioGrid items={sportsItems} onSelect={setSelected} />
+<<<<<<< HEAD
         {/* Sports Posters callout (Behance) */}
         <div className="mt-6">
           <a
@@ -612,12 +771,15 @@ export default function LevaniPortfolio() {
 
       <Section id="events" title="Events & Clubs" subtitle="Recaps, aftermovies, and club promos (vertical 9:16)." badge="New"> {/* vornato */}
         <PortfolioGrid items={eventsItems} onSelect={setSelected} />
+=======
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
       </Section>
 
       <Section id="slots" title="Slots" subtitle="Feature teases and character-driven cutdowns for popular slot IPs."> {/* vornato */}
         <PortfolioGrid items={slotsItems} onSelect={setSelected} />
       </Section>
 
+<<<<<<< HEAD
       {/* YouTube — compact profile image header */}
       <Section id="youtube" title="YouTube" subtitle="Latest edits and uploads from the VorNato channel." badge="Channel"> {/* vornato */}
         <div className="mb-8 flex items-center gap-4">
@@ -652,6 +814,14 @@ export default function LevaniPortfolio() {
             </div>
           </a>
         </div>
+=======
+      <Section id="youtube" title="YouTube" subtitle="Latest edits and uploads from the VorNato channel." badge="Channel"> {/* vornato */}
+        <PortfolioGrid items={youtubeItems} onSelect={setSelected} />
+      </Section>
+
+      <Section id="fiverr" title="Fiverr Work" subtitle="Hand-picked client pieces and repeat-order edits."> {/* vornato */}
+        <PortfolioGrid items={fiverrItems} onSelect={setSelected} />
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
       </Section>
 
       <Section id="fantasy" title="Fantasy Games" subtitle="Stylized teasers and promo assets for fantasy titles."> {/* vornato */}
@@ -666,7 +836,11 @@ export default function LevaniPortfolio() {
               <ul className="space-y-2 text-zinc-300">
                 <li>Senior Motion/Video Editor — BluePlanet Software Solutions</li> {/* vornato */}
                 <li>Freelance Video Editor — Fiverr & Upwork (ongoing)</li> {/* vornato */}
+<<<<<<< HEAD
                 <li>Content Creator — YouTube (Vornato)</li> {/* vornato */}
+=======
+                <li>Content Creator — YouTube (VorNato)</li> {/* vornato */}
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
               </ul>
             </div>
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
@@ -703,6 +877,7 @@ export default function LevaniPortfolio() {
           <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
             <div className="flex items-center gap-3 text-zinc-200">✉️ levaniesitashvili1999@gmail.com</div> {/* vornato */}
           </div>
+<<<<<<< HEAD
 
           {/* YouTube channel card (optional extra) */}
           <a
@@ -728,6 +903,25 @@ export default function LevaniPortfolio() {
               <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
             </form>
             <p className="mt-3 text-xs text-zinc-400">Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.</p>
+=======
+          <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+            <div className="flex items-center gap-3 text-zinc-200">📞 +995 595 55 14 05</div> {/* vornato */}
+          </div>
+          <a href="https://www.behance.net/vornato" target="_blank" rel="noreferrer" className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800"> {/* vornato */}
+            <div className="flex items-center gap-3 text-zinc-200">Behance /vornato</div>
+          </a>
+          <a href="https://youtube.com/@vornatoofficial" target="_blank" rel="noreferrer" className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800"> {/* vornato */}
+            <div className="flex items-center gap-3 text-zinc-200">YouTube /@vornatoofficial</div>
+          </a>
+          <div className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+            {/* vornato: wire a real form handler or emailjs here if needed */}
+            <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={(e) => e.preventDefault()}>
+              <input placeholder="Your name" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
+              <input placeholder="Email or Telegram" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
+              <textarea placeholder="Project details" className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]" /> {/* vornato */}
+              <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
+            </form>
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
           </div>
         </div>
       </Section>
@@ -741,6 +935,7 @@ export default function LevaniPortfolio() {
             <button className="absolute -top-10 right-0 text-zinc-300 hover:text-white" onClick={() => setSelected(null)}>Close</button>
             {selected.provider === "youtube" && selected.embedId ? (
               <div className="w-full aspect-video">
+<<<<<<< HEAD
                 <iframe
                   className="w-full h-full"
                   src={`https://www.youtube.com/embed/${selected.embedId}`}
@@ -751,6 +946,10 @@ export default function LevaniPortfolio() {
               </div>
             ) : selected.provider === "html5" && selected.src ? (
               <video className={`${selected.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"} w-full rounded-xl`} src={selected.src} controls playsInline />
+=======
+                <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${selected.embedId}`} title={selected.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+              </div>
+>>>>>>> 3e4b75e (Configure Vite base for GitHub Pages and add deploy workflow)
             ) : (
               <div className={`${selected.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"} w-full bg-zinc-900 rounded-xl ring-1 ring-zinc-800 flex items-center justify-center text-zinc-400`}>
                 <a href={selected.href || "#"} target="_blank" rel="noreferrer" className="underline">Open project</a>
