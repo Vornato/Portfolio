@@ -27,7 +27,6 @@ const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 // vornato: Small YouTube avatar (compact & crisp)
 // vornato: Small YouTube avatar (local copy in /public/)
 const YT_AVATAR_URL = "/vornato-avatar.jpg"; // place vornato-avatar.jpg in public/
-
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
 
 
