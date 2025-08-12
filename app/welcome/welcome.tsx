@@ -25,8 +25,9 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 
 // vornato: Small YouTube avatar (compact & crisp)
-const YT_AVATAR_URL =
-  "https://yt3.googleusercontent.com/ytc/AIdro_kf3xJ6bywZg1fV9tYBQuFrMhlQmycMOk5MYPxwLQ=s800-c-k-c0x00ffffff-no-rj"; // vornato
+// vornato: Small YouTube avatar (local copy in /public/)
+const YT_AVATAR_URL = "/vornato-avatar.jpg"; // place vornato-avatar.jpg in public/
+
 
 // vornato: Quick contact chips (top on mobile)
 const quickLinks = [
@@ -730,11 +731,13 @@ export default function LevaniPortfolio() {
       className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
     >
       <img
-        src={`${import.meta.env.BASE_URL}youtube-cover.jpg`}
-        alt="YouTube channel cover"
-        className="w-full aspect-[16/6] object-cover rounded-xl"
-        loading="lazy"
-      />
+  src="/youtube-cover.png" // file in public/
+  alt="YouTube channel cover"
+  className="w-full aspect-[16/6] object-cover rounded-xl"
+  loading="lazy"
+/>
+
+
       <Button className="rounded-2xl">YouTube Channel</Button>
     </a>
 
