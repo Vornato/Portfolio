@@ -1,6 +1,10 @@
+// Updated with // vornato comments for easy editing
+// All editable text, links, images, and video sources now marked with // vornato
+
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
+// --- Minimal UI components (kept in-file so the project works standalone) ---
 export const Badge: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className = "", ...props }) => (
   <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-100 ${className}`} {...props} />
 );
@@ -16,87 +20,106 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
   return <button className={`${base} ${styles} ${className}`} {...props} />;
 };
 
+// ==================== CONFIG you can change ====================
+// vornato: Your photo URL
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
-const YT_AVATAR_URL = `${import.meta.env.BASE_URL}profile.png`;
+
+// vornato: Small YouTube avatar (compact & crisp)
+const YT_AVATAR_URL =
+  "https://yt3.googleusercontent.com/ytc/AIdro_kf3xJ6bywZg1fV9tYBQuFrMhlQmycMOk5MYPxwLQ=s800-c-k-c0x00ffffff-no-rj"; // vornato
+
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
 
+// vornato: Quick contact chips (top on mobile)
 const quickLinks = [
-  { label: "Email", href: "mailto:levaniesitashvili1999@gmail.com" },
-  { label: "+995 595 55 14 05", href: "tel:+995595551405" },
-  { label: "YouTube: VorNato", href: "https://youtube.com/@vornatoofficial" },
-  { label: "Behance: vornato", href: "https://www.behance.net/vornato" },
-  { label: "Fiverr", href: "https://www.fiverr.com/sellers/vornatoofficial" },
-  { label: "Upwork", href: "https://www.upwork.com/freelancers/~012da965c61594d259" },
+  { label: "Email", href: "mailto:levaniesitashvili1999@gmail.com" }, // vornato
+  { label: "+995 595 55 14 05", href: "tel:+995595551405" }, // vornato
+  { label: "YouTube: VorNato", href: "https://youtube.com/@vornatoofficial" }, // vornato
+  { label: "Behance: vornato", href: "https://www.behance.net/vornato" }, // vornato
+  { label: "Fiverr", href: "https://www.fiverr.com/sellers/vornatoofficial" }, // vornato
+  { label: "Upwork", href: "https://www.upwork.com/freelancers/~012da965c61594d259" }, // vornato
 ];
 
+// ==== Data types ====
 type PortfolioItem = {
   title: string;
   tag?: string;
-  poster?: string;
-  href?: string;
-  provider?: "youtube" | "html5";
-  embedId?: string;
-  src?: string;
-  orientation?: "vertical" | "horizontal";
+  poster?: string;      // vornato: thumbnail/poster url (YouTube or local)
+  href?: string;        // vornato: Behance/External link
+  provider?: "youtube" | "html5"; // vornato: player type
+  embedId?: string;     // vornato: for YouTube
+  src?: string;         // vornato: for html5 videos
+  orientation?: "vertical" | "horizontal"; // vertical=1080x1920, horizontal=1920x1080
 };
 
+// ========== Portfolio items (YouTube where requested) ==========
+
+// Casino (3 Shorts + 1 standard)
 const casinoItems: PortfolioItem[] = [
-  { title: "Casino Short 1", tag: "Casino", provider: "youtube", embedId: "upR7VahYFns", poster: "https://img.youtube.com/vi/upR7VahYFns/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Casino Short 2", tag: "Casino", provider: "youtube", embedId: "gcNzXB7Suz4", poster: "https://img.youtube.com/vi/gcNzXB7Suz4/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Casino Short 3", tag: "Casino", provider: "youtube", embedId: "5x4v_d2RvFc", poster: "https://img.youtube.com/vi/5x4v_d2RvFc/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Casino Promo", tag: "Casino", provider: "youtube", embedId: "12I1ZI218g0", poster: "https://img.youtube.com/vi/12I1ZI218g0/maxresdefault.jpg", orientation: "horizontal" },
+  { title: "Casino Short 1", tag: "Casino", provider: "youtube", embedId: "upR7VahYFns", poster: "https://img.youtube.com/vi/upR7VahYFns/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Casino Short 2", tag: "Casino", provider: "youtube", embedId: "gcNzXB7Suz4", poster: "https://img.youtube.com/vi/gcNzXB7Suz4/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Casino Short 3", tag: "Casino", provider: "youtube", embedId: "5x4v_d2RvFc", poster: "https://img.youtube.com/vi/5x4v_d2RvFc/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Casino Promo",   tag: "Casino", provider: "youtube", embedId: "12I1ZI218g0", poster: "https://img.youtube.com/vi/12I1ZI218g0/maxresdefault.jpg", orientation: "horizontal" }, // vornato
 ];
 
+// Sports (6 Shorts)
 const sportsItems: PortfolioItem[] = [
-  { title: "Sports Short 1", tag: "Sports", provider: "youtube", embedId: "E6GFqu2ttew", poster: "https://img.youtube.com/vi/E6GFqu2ttew/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Sports Short 2", tag: "Sports", provider: "youtube", embedId: "rrS3HWgNbYY", poster: "https://img.youtube.com/vi/rrS3HWgNbYY/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Sports Short 3", tag: "Sports", provider: "youtube", embedId: "sKgoTYIXh64", poster: "https://img.youtube.com/vi/sKgoTYIXh64/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Sports Short 4", tag: "Sports", provider: "youtube", embedId: "hpGqE-6rxsA", poster: "https://img.youtube.com/vi/hpGqE-6rxsA/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Sports Short 5", tag: "Sports", provider: "youtube", embedId: "bT4JhehsXEU", poster: "https://img.youtube.com/vi/bT4JhehsXEU/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Sports Short 6", tag: "Sports", provider: "youtube", embedId: "kxHJrAXDAN0", poster: "https://img.youtube.com/vi/kxHJrAXDAN0/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Sports Short 1", tag: "Sports", provider: "youtube", embedId: "E6GFqu2ttew", poster: "https://img.youtube.com/vi/E6GFqu2ttew/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Sports Short 2", tag: "Sports", provider: "youtube", embedId: "rrS3HWgNbYY", poster: "https://img.youtube.com/vi/rrS3HWgNbYY/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Sports Short 3", tag: "Sports", provider: "youtube", embedId: "sKgoTYIXh64", poster: "https://img.youtube.com/vi/sKgoTYIXh64/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Sports Short 4", tag: "Sports", provider: "youtube", embedId: "hpGqE-6rxsA", poster: "https://img.youtube.com/vi/hpGqE-6rxsA/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Sports Short 5", tag: "Sports", provider: "youtube", embedId: "bT4JhehsXEU", poster: "https://img.youtube.com/vi/bT4JhehsXEU/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Sports Short 6", tag: "Sports", provider: "youtube", embedId: "kxHJrAXDAN0", poster: "https://img.youtube.com/vi/kxHJrAXDAN0/maxresdefault.jpg", orientation: "vertical" }, // vornato
 ];
 
+// Events & Clubs (3 Shorts)
 const eventsItems: PortfolioItem[] = [
-  { title: "Event Short 1", tag: "Events", provider: "youtube", embedId: "NBENHBn7lnw", poster: "https://img.youtube.com/vi/NBENHBn7lnw/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Event Short 2", tag: "Events", provider: "youtube", embedId: "FRnkFAiz48w", poster: "https://img.youtube.com/vi/FRnkFAiz48w/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Event Short 3", tag: "Events", provider: "youtube", embedId: "K5wcGhLh-Cs", poster: "https://img.youtube.com/vi/K5wcGhLh-Cs/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Event Short 1", tag: "Events", provider: "youtube", embedId: "NBENHBn7lnw", poster: "https://img.youtube.com/vi/NBENHBn7lnw/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Event Short 2", tag: "Events", provider: "youtube", embedId: "FRnkFAiz48w", poster: "https://img.youtube.com/vi/FRnkFAiz48w/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Event Short 3", tag: "Events", provider: "youtube", embedId: "K5wcGhLh-Cs", poster: "https://img.youtube.com/vi/K5wcGhLh-Cs/maxresdefault.jpg", orientation: "vertical" }, // vornato
 ];
 
+// SLOTS (8 YouTube videos)
 const slotsItems: PortfolioItem[] = [
-  { title: "Slots Video 1", tag: "Slots", provider: "youtube", embedId: "9k06t0JCjX4", poster: "https://img.youtube.com/vi/9k06t0JCjX4/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "Slots Video 2", tag: "Slots", provider: "youtube", embedId: "63VB0YRhYw0", poster: "https://img.youtube.com/vi/63VB0YRhYw0/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "Slots Video 3", tag: "Slots", provider: "youtube", embedId: "oR1DuHQEv98", poster: "https://img.youtube.com/vi/oR1DuHQEv98/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "Slots Video 4", tag: "Slots", provider: "youtube", embedId: "X1SvZQoOvek", poster: "https://img.youtube.com/vi/X1SvZQoOvek/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "Slots Video 5", tag: "Slots", provider: "youtube", embedId: "YzbS-s_5rk4", poster: "https://img.youtube.com/vi/YzbS-s_5rk4/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "Slots Video 6", tag: "Slots", provider: "youtube", embedId: "jz4hxRYBxC0", poster: "https://img.youtube.com/vi/jz4hxRYBxC0/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "Slots Video 7", tag: "Slots", provider: "youtube", embedId: "xB8Oivu_7H0", poster: "https://img.youtube.com/vi/xB8Oivu_7H0/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "Slots Video 8", tag: "Slots", provider: "youtube", embedId: "aWNJ_rZ7SBU", poster: "https://img.youtube.com/vi/aWNJ_rZ7SBU/maxresdefault.jpg", orientation: "horizontal" },
+  { title: "Slots Video 1", tag: "Slots", provider: "youtube", embedId: "9k06t0JCjX4", poster: "https://img.youtube.com/vi/9k06t0JCjX4/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "Slots Video 2", tag: "Slots", provider: "youtube", embedId: "63VB0YRhYw0", poster: "https://img.youtube.com/vi/63VB0YRhYw0/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "Slots Video 3", tag: "Slots", provider: "youtube", embedId: "oR1DuHQEv98", poster: "https://img.youtube.com/vi/oR1DuHQEv98/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "Slots Video 4", tag: "Slots", provider: "youtube", embedId: "X1SvZQoOvek", poster: "https://img.youtube.com/vi/X1SvZQoOvek/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "Slots Video 5", tag: "Slots", provider: "youtube", embedId: "YzbS-s_5rk4", poster: "https://img.youtube.com/vi/YzbS-s_5rk4/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "Slots Video 6", tag: "Slots", provider: "youtube", embedId: "jz4hxRYBxC0", poster: "https://img.youtube.com/vi/jz4hxRYBxC0/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "Slots Video 7", tag: "Slots", provider: "youtube", embedId: "xB8Oivu_7H0", poster: "https://img.youtube.com/vi/xB8Oivu_7H0/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "Slots Video 8", tag: "Slots", provider: "youtube", embedId: "aWNJ_rZ7SBU", poster: "https://img.youtube.com/vi/aWNJ_rZ7SBU/maxresdefault.jpg", orientation: "horizontal" }, // vornato
 ];
 
+// YouTube (3 main)
 const youtubeItems: PortfolioItem[] = [
-  { title: "YouTube #1", tag: "YouTube", provider: "youtube", embedId: "T4mBnh8uf24", poster: "https://img.youtube.com/vi/T4mBnh8uf24/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "YouTube #2", tag: "YouTube", provider: "youtube", embedId: "VidlLQRZBm0", poster: "https://img.youtube.com/vi/VidlLQRZBm0/maxresdefault.jpg", orientation: "horizontal" },
-  { title: "YouTube #3", tag: "YouTube", provider: "youtube", embedId: "hGEj_6f-lP8", poster: "https://img.youtube.com/vi/hGEj_6f-lP8/maxresdefault.jpg", orientation: "horizontal" },
+  { title: "YouTube #1", tag: "YouTube", provider: "youtube", embedId: "T4mBnh8uf24", poster: "https://img.youtube.com/vi/T4mBnh8uf24/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "YouTube #2", tag: "YouTube", provider: "youtube", embedId: "VidlLQRZBm0", poster: "https://img.youtube.com/vi/VidlLQRZBm0/maxresdefault.jpg", orientation: "horizontal" }, // vornato
+  { title: "YouTube #3", tag: "YouTube", provider: "youtube", embedId: "hGEj_6f-lP8", poster: "https://img.youtube.com/vi/hGEj_6f-lP8/maxresdefault.jpg", orientation: "horizontal" }, // vornato
 ];
 
+// Fiverr (single big card → Behance)
 const fiverrCover = `${import.meta.env.BASE_URL}fiverr.png`;
 
+// Fantasy (3 Shorts)
 const fantasyItems: PortfolioItem[] = [
-  { title: "Fantasy Short 1", tag: "Fantasy", provider: "youtube", embedId: "7HlNY5BPZk0", poster: "https://img.youtube.com/vi/7HlNY5BPZk0/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Fantasy Short 2", tag: "Fantasy", provider: "youtube", embedId: "sVsOgIr5mws", poster: "https://img.youtube.com/vi/sVsOgIr5mws/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Fantasy Short 3", tag: "Fantasy", provider: "youtube", embedId: "wqPAeIhHqgg", poster: "https://img.youtube.com/vi/wqPAeIhHqgg/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Fantasy Short 1", tag: "Fantasy", provider: "youtube", embedId: "7HlNY5BPZk0", poster: "https://img.youtube.com/vi/7HlNY5BPZk0/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Fantasy Short 2", tag: "Fantasy", provider: "youtube", embedId: "sVsOgIr5mws", poster: "https://img.youtube.com/vi/sVsOgIr5mws/maxresdefault.jpg", orientation: "vertical" }, // vornato
+  { title: "Fantasy Short 3", tag: "Fantasy", provider: "youtube", embedId: "wqPAeIhHqgg", poster: "https://img.youtube.com/vi/wqPAeIhHqgg/maxresdefault.jpg", orientation: "vertical" }, // vornato
 ];
 
-const sectionOrder = ["hero","casino","sports","events","slots","youtube","fiverr","fantasy","experience","contact"] as const;
+// vornato: Toggle or re-order sections here (Events between Sports and Slots)
+const sectionOrder = ["hero","casino","sports","events","slots","youtube","fiverr","fantasy","experience","contact"] as const; // vornato
 
+// ==================== Helper Components ====================
 const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({ id, title, subtitle, badge, children }) => (
-  <section id={id} className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+  <section id={id} className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
     <div className="w-full">
-      <div className="mb-6 sm:mb-10 flex items-end justify-between">
+      <div className="mb-10 flex items-end justify-between">
         <div>
           {badge && (<Badge className="mb-3 rounded-2xl px-3 py-1 text-xs">{badge}</Badge>)}
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
-          {subtitle && (<p className="mt-2 text-zinc-300 max-w-2xl leading-relaxed text-sm sm:text-base">{subtitle}</p>)}
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
+          {subtitle && (<p className="mt-2 text-zinc-300 max-w-2xl leading-relaxed">{subtitle}</p>)}
         </div>
         <a href="#top" className="hidden md:inline-flex items-center text-zinc-400 hover:text-white text-sm">Back to top</a>
       </div>
@@ -105,6 +128,7 @@ const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: 
   </section>
 );
 
+// Poster image helper
 const Poster: React.FC<{ item: PortfolioItem }> = ({ item }) => (
   <img
     src={item.poster}
@@ -113,8 +137,9 @@ const Poster: React.FC<{ item: PortfolioItem }> = ({ item }) => (
   />
 );
 
+// Grid
 const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: PortfolioItem) => void }> = ({ items, onSelect }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {items.map((it, i) => (
       <button
         key={i}
@@ -123,10 +148,10 @@ const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: Portfo
       >
         <Poster item={it} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 p-3 sm:p-4">
+        <div className="absolute bottom-0 p-4">
           <div className="flex items-center gap-2 text-zinc-200">
             {it.tag && <Badge className="rounded-full bg-zinc-800/80">{it.tag}</Badge>}
-            <span className="font-semibold text-sm sm:text-base">{it.title}</span>
+            <span className="font-semibold">{it.title}</span>
           </div>
         </div>
       </button>
@@ -134,12 +159,16 @@ const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: Portfo
   </div>
 );
 
-const BASE_GEAR_DURATIONS = [36, 28, 22];
+/** ---------- Dynamic Background (gears + shapes that react to scroll) ---------- */
+// vornato: tweak these if you want the gears faster/slower by default
+const BASE_GEAR_DURATIONS = [36, 28, 22]; // seconds for gear 1/2/3 when idle
 
 function useScrollSpeed() {
+  // Returns a factor between ~0.12 (idle) and ~1.0 (fast scroll)
   const [speed, setSpeed] = useState(0.12);
   const last = useRef({ y: 0, t: performance.now() });
   const decayRef = useRef<number | null>(null);
+
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
@@ -147,12 +176,14 @@ function useScrollSpeed() {
       const dy = Math.abs(y - last.current.y);
       const dt = Math.max(16, t - last.current.t);
       last.current = { y, t };
-      const instant = Math.min(1, (dy / dt) / 2);
-      setSpeed((prev) => Math.max(instant, prev));
+      // Normalize: ~dy per ms → scale
+      const instant = Math.min(1, (dy / dt) / 2); // adjust divisor for sensitivity
+      setSpeed((prev) => Math.max(instant, prev)); // spike up quickly
+
       if (decayRef.current) cancelAnimationFrame(decayRef.current);
       const decay = () => {
         setSpeed((prev) => {
-          const next = prev * 0.92 + 0.012;
+          const next = prev * 0.92 + 0.012; // smooth exponential decay to ~0.12
           return next < 0.12 ? 0.12 : next;
         });
         decayRef.current = requestAnimationFrame(decay);
@@ -165,6 +196,7 @@ function useScrollSpeed() {
       if (decayRef.current) cancelAnimationFrame(decayRef.current);
     };
   }, []);
+
   return speed;
 }
 
@@ -194,21 +226,16 @@ const BackgroundMotion: React.FC = () => {
   const driftX = useTransform(scrollYProgress, [0, 1], ["0vw", "-12vw"]);
   const driftY = useTransform(scrollYProgress, [0, 1], ["0vh", "8vh"]);
   const dur = BASE_GEAR_DURATIONS.map((base) => base / (0.4 + speed));
-  const [mobile, setMobile] = useState(false);
-  useEffect(() => {
-    const f = () => setMobile(window.innerWidth < 640);
-    f();
-    window.addEventListener("resize", f);
-    return () => window.removeEventListener("resize", f);
-  }, []);
-  const boxes = mobile ? 6 : 12;
-  const rings = mobile ? 3 : 6;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <motion.div
         className="absolute inset-0"
-        style={{ background: "radial-gradient(1200px 800px at 20% 30%, rgba(153,153,255,0.30), transparent 60%), radial-gradient(1200px 900px at 80% 70%, rgba(0,255,198,0.22), transparent 60%), #0B0B13", backgroundSize: "220% 220%" }}
+        style={{
+          background:
+            "radial-gradient(1200px 800px at 20% 30%, rgba(153,153,255,0.30), transparent 60%), radial-gradient(1200px 900px at 80% 70%, rgba(0,255,198,0.22), transparent 60%), #0B0B13",
+          backgroundSize: "220% 220%",
+        }}
         animate={{ backgroundPosition: ["0% 0%", "100% 40%", "0% 100%", "0% 0%"] }}
         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
       />
@@ -226,36 +253,39 @@ const BackgroundMotion: React.FC = () => {
         transition={{ duration: 48 / (0.4 + speed), repeat: Infinity, ease: "linear" }}
       />
 
-      <div className="hidden sm:block">
-        <motion.div className="absolute left-[8vw] top-[14vh] opacity-90">
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: dur[0], repeat: Infinity, ease: "linear" }}>
-            <GearSVG size={240} teeth={12} />
-          </motion.div>
+      <motion.div className="absolute left-[8vw] top-[14vh] opacity-90">
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: dur[0], repeat: Infinity, ease: "linear" }}>
+          <GearSVG size={240} teeth={12} />
         </motion.div>
-        <motion.div className="absolute right-[10vw] top-[22vh] opacity-85">
-          <motion.div animate={{ rotate: -360 }} transition={{ duration: dur[1], repeat: Infinity, ease: "linear" }}>
-            <GearSVG size={180} teeth={10} />
-          </motion.div>
+      </motion.div>
+      <motion.div className="absolute right-[10vw] top-[22vh] opacity-85">
+        <motion.div animate={{ rotate: -360 }} transition={{ duration: dur[1], repeat: Infinity, ease: "linear" }}>
+          <GearSVG size={180} teeth={10} />
         </motion.div>
-        <motion.div className="absolute left:[18vw] bottom-[12vh] opacity-80">
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: dur[2], repeat: Infinity, ease: "linear" }}>
-            <GearSVG size={140} teeth={8} />
-          </motion.div>
+      </motion.div>
+      <motion.div className="absolute left-[18vw] bottom-[12vh] opacity-80">
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: dur[2], repeat: Infinity, ease: "linear" }}>
+          <GearSVG size={140} teeth={8} />
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.div className="absolute right-[10vw] top-[22vh]" style={{ translateX: -24, translateY: 84 }}>
         <div className="w-44 h-[2px] bg-white/15" />
       </motion.div>
 
-      {[...Array(boxes)].map((_, i) => (
+      {[...Array(12)].map((_, i) => (
+        // Outer wrapper: speed-reactive spin
         <motion.div
           key={i}
           className="absolute"
-          style={{ top: `${6 + (i * 8) % 86}%`, left: `${(i * 11) % 92}%` }}
+          style={{
+            top: `${6 + (i * 8) % 86}%`,
+            left: `${(i * 11) % 92}%`,
+          }}
           animate={{ rotate: 360 }}
           transition={{ duration: (18 + i * 1.2) / (0.4 + speed), repeat: Infinity, ease: "linear" }}
         >
+          {/* Inner: slow wander for parallax */}
           <motion.div
             className="border border-white/14 rounded-xl"
             style={{ width: 70 + (i % 4) * 28, height: 70 + ((i + 2) % 4) * 28 }}
@@ -264,7 +294,8 @@ const BackgroundMotion: React.FC = () => {
           />
         </motion.div>
       ))}
-      {[...Array(rings)].map((_, i) => (
+      {[...Array(6)].map((_, i) => (
+        // Outer rotating ring (speed-reactive)
         <motion.div
           key={`ring-${i}`}
           className="absolute"
@@ -272,6 +303,7 @@ const BackgroundMotion: React.FC = () => {
           animate={{ rotate: 360 }}
           transition={{ duration: (22 + i) / (0.4 + speed), repeat: Infinity, ease: "linear" }}
         >
+          {/* Inner pulsing disc */}
           <motion.div
             animate={{ scale: [0.85, 1.12, 0.85], opacity: [0.25, 0.45, 0.25] }}
             transition={{ duration: 10 + i, repeat: Infinity, ease: "easeInOut" }}
@@ -290,9 +322,10 @@ const BackgroundMotion: React.FC = () => {
   );
 };
 
+/** ---------- Edge arrows (keep near edges of the hero photo) ---------- */
 const EdgeArrows: React.FC = () => (
   <motion.div
-    className="pointer-events-none absolute inset-0 hidden md:block"
+    className="pointer-events-none absolute inset-0"
     animate={{ rotate: 360 }}
     transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
   >
@@ -313,58 +346,69 @@ const EdgeArrows: React.FC = () => (
   </motion.div>
 );
 
+/** ---------- Flying badge (toggle: moving <-> dropped) ---------- */
 const FlyingBadge: React.FC<{
   sectionOrder: string[];
   dropped?: boolean;
   onToggle?: () => void;
 }> = ({ sectionOrder, dropped = false, onToggle }) => {
-  const leftX = "-44vw";
-  const rightX = "44vw";
+  const leftX = "-44vw";   // vornato
+  const rightX = "44vw";   // vornato
+
   const steps = Math.max(1, sectionOrder.length - 1);
+
   const input: number[] = [];
   const xVals: (string | number)[] = [];
   const rotVals: number[] = [];
   const scaleVals: number[] = [];
+
   for (let i = 0; i < steps; i++) {
     const goingLeftToRight = i % 2 === 0;
+
     const tStart = i / steps;
     const tQ1   = tStart + 0.25 / steps;
     const tMid  = tStart + 0.50 / steps;
     const tQ3   = tStart + 0.75 / steps;
     const tEnd  = (i + 1) / steps;
+
     const startEdge = goingLeftToRight ? leftX : rightX;
     const q1        = goingLeftToRight ? "-22vw" : "22vw";
     const center    = "0vw";
     const q3        = goingLeftToRight ? "22vw" : "-22vw";
     const endEdge   = goingLeftToRight ? rightX : leftX;
+
     const r0  = 180 * i;
     const r45 = r0 + 45;
     const r90 = r0 + 90;
     const r135= r0 + 135;
     const r180= r0 + 180;
+
     const s0  = 0.90;
     const s1  = 1.12;
     const s2  = 0.98;
     const s3  = 1.12;
     const s4  = 0.90;
+
     input.push(tStart, tQ1, tMid, tQ3, tEnd);
     xVals.push(startEdge, q1, center, q3, endEdge);
     rotVals.push(r0, r45, r90, r135, r180);
     scaleVals.push(s0, s1, s2, s3, s4);
   }
+
   if (steps === 1 && input.length === 0) {
     input.push(0, 1);
     xVals.push(leftX, rightX);
     rotVals.push(0, 180);
     scaleVals.push(0.9, 0.9);
   }
+
   const { scrollYProgress } = useScroll();
   const x      = useTransform(scrollYProgress, input, xVals as any);
   const rotate = useTransform(scrollYProgress, input, rotVals);
   const scale  = useTransform(scrollYProgress, input, scaleVals);
 
   const labels: Record<string, React.ReactNode> = {
-    hero: <span className="text-[#9999FF]">Ae</span>,
+    hero: <span className="text-[#9999FF]">Ae</span>, // vornato
     casino: <span>🎲</span>,
     sports: <span>🏆</span>,
     events: <span>🎉</span>,
@@ -389,6 +433,8 @@ const FlyingBadge: React.FC<{
   }, [sectionOrder.length]);
 
   const currentKey = sectionOrder[currentIdx] || "hero";
+
+  // Positioning depending on state
   const containerClass = dropped
     ? "fixed left-1/2 bottom-6 z-30 -translate-x-1/2"
     : "fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2";
@@ -401,16 +447,18 @@ const FlyingBadge: React.FC<{
         title={dropped ? "Click to resume floating" : "Click to drop here"}
         onClick={onToggle}
         className="pointer-events-auto focus:outline-none"
+        // When dropped: hold still with a tiny idle pulse. When floating: follow transforms.
         style={dropped ? undefined : { x }}
         animate={dropped ? { y: 0, rotate: 0, scale: 1 } : undefined}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         <motion.div
+          // Rotate/scale only when not dropped
           style={dropped ? undefined : { rotate, scale }}
-          className="relative h-28 w-28 sm:h-36 sm:w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
+          className="relative h-36 w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
           whileTap={{ scale: 0.96 }}
         >
-          <div className="select-none text-xl sm:text-2xl font-black tracking-widest mix-blend-screen text-white">
+          <div className="select-none text-2xl font-black tracking-widest mix-blend-screen text-white">
             {labels[currentKey]}
           </div>
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
@@ -420,32 +468,65 @@ const FlyingBadge: React.FC<{
   );
 };
 
+// vornato: SVG placeholder (kept for safety)
+function posterPlaceholder({ label, orientation = "horizontal" }: { label: string; orientation?: "vertical" | "horizontal" }) {
+  const w = orientation === "vertical" ? 1080 : 1920;
+  const h = orientation === "vertical" ? 1920 : 1080;
+  const bg = encodeURIComponent("#0E0E18");
+  const fg = encodeURIComponent("#9999FF");
+  const text = encodeURIComponent(label);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>
+    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='${fg}' stop-opacity='0.15'/><stop offset='100%' stop-color='${fg}' stop-opacity='0.02'/></linearGradient></defs>
+    <rect width='100%' height='100%' fill='${bg}'/><rect width='100%' height='100%' fill='url(#g)'/>
+    <g fill='white' opacity='0.85' font-family='Inter,system-ui,Helvetica,Arial' font-size='56' text-anchor='middle'><text x='50%' y='50%'>${text}</text></g>
+  </svg>`;
+  return `data:image/svg+xml;utf8,${svg}`;
+}
+
 export default function LevaniPortfolio() {
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
+
+  // NEW: state to control the badge toggle
   const [badgeDropped, setBadgeDropped] = useState(false);
 
+  // --- Runtime tests (cheap sanity checks) ---
+  useEffect(() => {
+    console.assert(typeof (motion as any) !== "undefined", "framer-motion 'motion' should be defined");
+    const expected = sectionOrder.length;
+    console.assert(expected === 10, `Expected 10 waypoints, found ${expected}`);
+    console.assert(Array.isArray(casinoItems) && casinoItems.length > 0, "casinoItems should be defined with items");
+    console.assert(Array.isArray(sportsItems) && sportsItems.length > 0, "sportsItems should be defined with items");
+    console.assert(Array.isArray(eventsItems) && eventsItems.length > 0, "eventsItems should be defined with items");
+    console.assert(Array.isArray(slotsItems) && slotsItems.length > 0, "slotsItems should be defined with items");
+    console.assert(Array.isArray(youtubeItems) && youtubeItems.length > 0, "youtubeItems should be defined with items");
+    console.assert(Array.isArray(fantasyItems) && fantasyItems.length > 0, "fantasyItems should be defined with items");
+  }, []);
+
+  // --- Simple mailto form handler (no server needed) ---
   const onContactSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const name = (fd.get("name") as string) || "";
     const contact = (fd.get("contact") as string) || "";
     const message = (fd.get("message") as string) || "";
-    const subject = encodeURIComponent(`Portfolio inquiry from ${name || "Website"}`);
+    const subject = encodeURIComponent(`Portfolio inquiry from ${name || "Website"}`); // vornato
     const body = encodeURIComponent(`Contact: ${contact}\n\n${message}`);
-    window.location.href = `mailto:levaniesitashvili1999@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:levaniesitashvili1999@gmail.com?subject=${subject}&body=${body}`; // vornato
   };
 
   return (
     <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory">
+      {/* Background (modern motion scene) */}
       <BackgroundMotion />
 
+      {/* NAV */}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60 bg-zinc-900/70 border-b border-zinc-800">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
-          <a href="#top" className="flex items-center gap-2 font-bold tracking-wide">Levani Esitashvili</a>
+          <a href="#top" className="flex items-center gap-2 font-bold tracking-wide">Levani Esitashvili</a> {/* vornato */}
           <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-300">
             <a href="#casino" className="hover:text-white">Casino</a>
             <a href="#sports" className="hover:text-white">Sports</a>
-            <a href="#events" className="hover:text-white">Events & Clubs</a>
+            <a href="#events" className="hover:text-white">Events & Clubs</a> {/* vornato */}
             <a href="#slots" className="hover:text-white">Slots</a>
             <a href="#youtube" className="hover:text-white">YouTube</a>
             <a href="#fiverr" className="hover:text-white">Fiverr</a>
@@ -457,22 +538,24 @@ export default function LevaniPortfolio() {
         </div>
       </header>
 
-      <section className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-16 sm:pb-20">
-        <div className="mb-4 sm:mb-6 flex md:hidden gap-2 overflow-x-auto">
+      {/* HERO */}
+      <section className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-20">
+        <div className="mb-6 flex md:hidden gap-2 overflow-x-auto">
           {quickLinks.map((q, i) => (
             <a key={i} href={q.href} className="flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-2 text-xs ring-1 ring-zinc-800">{q.label}</a>
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 items-center w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center w-full">
+          {/* Photo card with "Click it" + edge arrows */}
           <div className="relative">
             <a
-              href="https://youtu.be/pPaX34rLRHY"
+              href="https://youtu.be/pPaX34rLRHY" // vornato
               target="_blank"
               rel="noreferrer"
               className="block relative overflow-hidden rounded-3xl ring-1 ring-zinc-800 group"
               aria-label="Open intro video"
             >
-              <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover sm:aspect-[16/9] aspect-[4/3]" />
+              <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover" /> {/* vornato */}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
               <EdgeArrows />
               <motion.div
@@ -480,7 +563,7 @@ export default function LevaniPortfolio() {
                 animate={{ scale: [1, 1.1, 1], rotate: [0, -3, 3, 0] }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
               >
-                <span className="rounded-full bg-black/70 text-white text-xs px-3 py-1 ring-1 ring-white/20 shadow-lg">Click it</span>
+                <span className="rounded-full bg-black/70 text-white text-xs px-3 py-1 ring-1 ring-white/20 shadow-lg">Click it</span> {/* vornato */}
               </motion.div>
             </a>
             <div className="mt-4 flex flex-wrap gap-2">
@@ -490,33 +573,36 @@ export default function LevaniPortfolio() {
             </div>
           </div>
           <div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">Video Editor & After Effects Specialist</h1>
-            <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl text-sm sm:text-base">
+            <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight">Video Editor & After Effects Specialist</h1> {/* vornato */}
+            <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">
               I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
-            </p>
+            </p> {/* vornato */}
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#casino"><Button className="rounded-2xl">View Work</Button></a>
-              <a href="#contact"><Button variant="secondary" className="rounded-2xl">Hire Me</Button></a>
+              <a href="#casino"><Button className="rounded-2xl">View Work</Button></a> {/* vornato */}
+              <a href="#contact"><Button variant="secondary" className="rounded-2xl">Hire Me</Button></a> {/* vornato */}
             </div>
           </div>
         </div>
       </section>
 
+      {/* Moving/Droppable section icon */}
       <FlyingBadge
         sectionOrder={[...sectionOrder]}
         dropped={badgeDropped}
         onToggle={() => setBadgeDropped((v) => !v)}
       />
 
-      <Section id="casino" title="Casino" subtitle="Trailers, promos, bumpers and motion graphics for casino brands." badge="Portfolio">
+      {/* SECTIONS */}
+      <Section id="casino" title="Casino" subtitle="Trailers, promos, bumpers and motion graphics for casino brands." badge="Portfolio"> {/* vornato */}
         <PortfolioGrid items={casinoItems} onSelect={setSelected} />
       </Section>
 
-      <Section id="sports" title="Sports" subtitle="Odds reels, hype edits, and event highlights.">
+      <Section id="sports" title="Sports" subtitle="Odds reels, hype edits, and event highlights."> {/* vornato */}
         <PortfolioGrid items={sportsItems} onSelect={setSelected} />
+        {/* Sports Posters callout (Behance) */}
         <div className="mt-6">
           <a
-            href="https://www.behance.net/gallery/172080181/Sport-Poster-Designs-%28Football-Basketball-etc%29"
+            href="https://www.behance.net/gallery/172080181/Sport-Poster-Designs-%28Football-Basketball-etc%29" // vornato
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900 px-4 py-3 text-sm ring-1 ring-zinc-800 hover:ring-zinc-600 transition"
@@ -526,37 +612,39 @@ export default function LevaniPortfolio() {
         </div>
       </Section>
 
-      <Section id="events" title="Events & Clubs" subtitle="Recaps, aftermovies, and club promos (vertical 9:16)." badge="New">
+      <Section id="events" title="Events & Clubs" subtitle="Recaps, aftermovies, and club promos (vertical 9:16)." badge="New"> {/* vornato */}
         <PortfolioGrid items={eventsItems} onSelect={setSelected} />
       </Section>
 
-      <Section id="slots" title="Slots" subtitle="Feature teases and character-driven cutdowns for popular slot IPs.">
+      <Section id="slots" title="Slots" subtitle="Feature teases and character-driven cutdowns for popular slot IPs."> {/* vornato */}
         <PortfolioGrid items={slotsItems} onSelect={setSelected} />
       </Section>
 
-      <Section id="youtube" title="YouTube" subtitle="Latest edits and uploads from the VorNato channel." badge="Channel">
+      {/* YouTube — compact profile image header */}
+      <Section id="youtube" title="YouTube" subtitle="Latest edits and uploads from the VorNato channel." badge="Channel"> {/* vornato */}
         <div className="mb-8 flex items-center gap-4">
-          <div className="relative w-14 h-14 md:w-20 md:h-20 rounded-full overflow-hidden ring-4 ring-red-500/70 shadow-lg">
-            <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" />
+          <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden ring-4 ring-red-500/70 shadow-lg">
+            <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" /> {/* vornato */}
           </div>
           <div className="flex items-center gap-3">
             <a href="https://youtube.com/@vornatoofficial" target="_blank" rel="noreferrer">
-              <Button className="rounded-2xl">YouTube Channel</Button>
+              <Button className="rounded-2xl">YouTube Channel</Button> {/* vornato */}
             </a>
           </div>
         </div>
         <PortfolioGrid items={youtubeItems} onSelect={setSelected} />
       </Section>
 
-      <Section id="fiverr" title="Fiverr Work" subtitle="Hand-picked client pieces and repeat-order edits.">
+      {/* Fiverr — single big card */}
+      <Section id="fiverr" title="Fiverr Work" subtitle="Hand-picked client pieces and repeat-order edits."> {/* vornato */}
         <div className="grid grid-cols-1 gap-6">
           <a
-            href="https://www.behance.net/gallery/143654417/Unboxing-video-samples-for-Fiverr"
+            href="https://www.behance.net/gallery/143654417/Unboxing-video-samples-for-Fiverr" // vornato
             target="_blank"
             rel="noreferrer"
             className="group relative overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-zinc-800 hover:ring-zinc-600 transition"
           >
-            <img src={fiverrCover} alt="Fiverr portfolio" className="w-full object-cover sm:aspect-video aspect-[4/3] rounded-lg" />
+            <img src={fiverrCover} alt="Fiverr portfolio" className="w-full object-cover aspect-video rounded-lg" /> {/* vornato */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute bottom-0 p-4">
               <div className="flex items-center gap-2 text-zinc-200">
@@ -568,26 +656,26 @@ export default function LevaniPortfolio() {
         </div>
       </Section>
 
-      <Section id="fantasy" title="Fantasy Games" subtitle="Stylized teasers and promo assets for fantasy titles.">
+      <Section id="fantasy" title="Fantasy Games" subtitle="Stylized teasers and promo assets for fantasy titles."> {/* vornato */}
         <PortfolioGrid items={fantasyItems} onSelect={setSelected} />
       </Section>
 
-      <Section id="experience" title="Experience" subtitle="A quick look at my background and tools." badge="About">
+      <Section id="experience" title="Experience" subtitle="A quick look at my background and tools." badge="About"> {/* vornato */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Roles</h3>
+              <h3 className="font-semibold mb-2">Roles</h3> {/* vornato */}
               <ul className="space-y-2 text-zinc-300">
-                <li>Senior Motion/Video Editor — BluePlanet Software Solutions</li>
-                <li>Freelance Video Editor — Fiverr & Upwork (ongoing)</li>
-                <li>Content Creator — YouTube (Vornato)</li>
+                <li>Senior Motion/Video Editor — BluePlanet Software Solutions</li> {/* vornato */}
+                <li>Freelance Video Editor — Fiverr & Upwork (ongoing)</li> {/* vornato */}
+                <li>Content Creator — YouTube (Vornato)</li> {/* vornato */}
               </ul>
             </div>
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Education</h3>
+              <h3 className="font-semibold mb-2">Education</h3> {/* vornato */}
               <ul className="space-y-2 text-zinc-300">
-                <li>Business & Technology University — B.Sc. in Information Technology</li>
-                <li>Udemy — Videography Course (shooting fundamentals & editing workflows)</li>
+                <li>Business & Technology University — B.Sc. in Information Technology</li> {/* vornato */}
+                <li>Udemy — Videography Course (shooting fundamentals & editing workflows)</li> {/* vornato */}
               </ul>
             </div>
           </div>
@@ -612,41 +700,45 @@ export default function LevaniPortfolio() {
         </div>
       </Section>
 
-      <Section id="contact" title="Contact" subtitle="Let’s build something bold.">
+      <Section id="contact" title="Contact" subtitle="Let’s build something bold."> {/* vornato */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-            <div className="flex items-center gap-3 text-zinc-200">✉️ levaniesitashvili1999@gmail.com</div>
+            <div className="flex items-center gap-3 text-zinc-200">✉️ levaniesitashvili1999@gmail.com</div> {/* vornato */}
           </div>
 
+          {/* YouTube channel card (optional extra) */}
           <a
-            href="https://youtube.com/@vornatoofficial"
+            href="https://youtube.com/@vornatoofficial" // vornato
             target="_blank"
             rel="noreferrer"
             className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
           >
             <img
-              src={YT_COVER_URL}
-              alt="YouTube channel cover"
-              className="w-full sm:aspect-[16/6] aspect-[16/9] object-cover rounded-xl"
-              loading="lazy"
-            />
+  src={YT_COVER_URL}
+  alt="YouTube channel cover"
+  className="w-full aspect-[16/6] object-cover rounded-xl"
+  loading="lazy"
+/>
+
             <Button className="rounded-2xl">YouTube Channel</Button>
           </a>
 
+          {/* Contact form that opens mail client */}
           <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
             <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
-              <input name="name" placeholder="Your name" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" />
-              <input name="contact" placeholder="Email or Telegram" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" />
-              <textarea name="message" placeholder="Project details" className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]" />
-              <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button>
+              <input name="name" placeholder="Your name" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
+              <input name="contact" placeholder="Email or Telegram" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
+              <textarea name="message" placeholder="Project details" className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]" /> {/* vornato */}
+              <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
             </form>
             <p className="mt-3 text-xs text-zinc-400">Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.</p>
           </div>
         </div>
       </Section>
 
-      <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">© {new Date().getFullYear()} Levani Esitashvili — Portfolio</footer>
+      <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">© {new Date().getFullYear()} Levani Esitashvili — Portfolio</footer> {/* vornato */}
 
+      {/* Lightbox Modal */}
       {selected && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <div className="relative w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
