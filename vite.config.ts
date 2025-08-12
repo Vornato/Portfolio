@@ -3,7 +3,8 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+// vite.config.ts
 export default defineConfig({
-  base: "/portfolio/", // ⬅ change this to your exact repo name
+  base: "/Portfolio/",   // must match your repo name exactly
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 });
