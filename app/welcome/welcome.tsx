@@ -163,40 +163,53 @@ const BASE_GEAR_DURATIONS = [36, 28, 22]; // seconds for gear 1/2/3 when idle
 
 function useScrollSpeed() {
   // Returns a factor between ~0.12 (idle) and ~1.0 (fast scroll)
-  const [speed, setSpeed] = useState(0.12);
-  const last = useRef({ y: 0, t: performance.now() });
-  const decayRef = useRef<number | null>(null);
+  const [speed, setSpeed] = React.useState(0.12);
+  const last = React.useRef({ y: 0, t: performance.now() });
+  const decayTimer = React.useRef<number | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
       const t = performance.now();
       const dy = Math.abs(y - last.current.y);
       const dt = Math.max(16, t - last.current.t);
       last.current = { y, t };
-      // Normalize: ~dy per ms → scale
-      const instant = Math.min(1, (dy / dt) / 2); // adjust divisor for sensitivity
-      setSpeed((prev) => Math.max(instant, prev)); // spike up quickly
 
-      if (decayRef.current) cancelAnimationFrame(decayRef.current);
-      const decay = () => {
-        setSpeed((prev) => {
-          const next = prev * 0.92 + 0.012; // smooth exponential decay to ~0.12
-          return next < 0.12 ? 0.12 : next;
-        });
-        decayRef.current = requestAnimationFrame(decay);
-      };
-      decayRef.current = requestAnimationFrame(decay);
+      // Spike quickly based on instantaneous scroll velocity
+      const instant = Math.min(1, (dy / dt) / 2);
+      setSpeed((s) => Math.max(instant, s));
+
+      // Start a gentle decay at ~8 fps (throttled)
+      if (decayTimer.current == null) {
+        decayTimer.current = window.setInterval(() => {
+          setSpeed((s) => {
+            const next = s * 0.85 + 0.018; // tends toward ~0.12
+            if (next <= 0.121) {
+              if (decayTimer.current) {
+                clearInterval(decayTimer.current);
+                decayTimer.current = null;
+              }
+              return 0.12;
+            }
+            return next;
+          });
+        }, 120); // ~8 fps
+      }
     };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      if (decayRef.current) cancelAnimationFrame(decayRef.current);
+      if (decayTimer.current) {
+        clearInterval(decayTimer.current);
+        decayTimer.current = null;
+      }
     };
   }, []);
 
   return speed;
 }
+
 
 const GearSVG: React.FC<{ size: number; teeth?: number; stroke?: string }> = ({ size, teeth = 8, stroke = "rgba(153,153,255,0.55)" }) => {
   const r = size / 2;
@@ -513,7 +526,7 @@ export default function LevaniPortfolio() {
   };
 
   return (
-    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory">
+    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory bg-[#0B0B13]">
       {/* Background (modern motion scene) */}
       <BackgroundMotion />
 
