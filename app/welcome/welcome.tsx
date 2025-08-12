@@ -699,38 +699,59 @@ export default function LevaniPortfolio() {
       </Section>
 
       <Section id="contact" title="Contact" subtitle="Let’s build something bold."> {/* vornato */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-            <div className="flex items-center gap-3 text-zinc-200">✉️ levaniesitashvili1999@gmail.com</div> {/* vornato */}
-          </div>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+      <a
+        href="mailto:levaniesitashvili1999@gmail.com"
+        className="flex items-center gap-3 text-zinc-200 hover:underline"
+      >
+        ✉️ levaniesitashvili1999@gmail.com
+      </a> {/* vornato */}
+    </div>
 
-          {/* YouTube channel card (optional extra) */}
-          <a
-            href="https://youtube.com/@vornatoofficial" // vornato
-            target="_blank"
-            rel="noreferrer"
-            className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
-          >
-            <img
-              src={`${import.meta.env.BASE_URL}youtube-cover.jpg`}
-              alt="YouTube channel cover"
-              className="w-full aspect-[16/6] object-cover rounded-xl"
-            />
-            <Button className="rounded-2xl">YouTube Channel</Button>
-          </a>
+    {/* YouTube channel card (optional extra) */}
+    <a
+      href="https://youtube.com/@vornatoofficial" // vornato
+      target="_blank"
+      rel="noopener noreferrer"
+      className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
+    >
+      <img
+        src={`${import.meta.env.BASE_URL}youtube-cover.jpg`}
+        alt="YouTube channel cover"
+        className="w-full aspect-[16/6] object-cover rounded-xl"
+        loading="lazy"
+      />
+      <Button className="rounded-2xl">YouTube Channel</Button>
+    </a>
 
-          {/* Contact form that opens mail client */}
-          <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-            <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
-              <input name="name" placeholder="Your name" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
-              <input name="contact" placeholder="Email or Telegram" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" /> {/* vornato */}
-              <textarea name="message" placeholder="Project details" className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]" /> {/* vornato */}
-              <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
-            </form>
-            <p className="mt-3 text-xs text-zinc-400">Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.</p>
-          </div>
-        </div>
-      </Section>
+    {/* Contact form that opens mail client */}
+    <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+      <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
+        <input
+          name="name"
+          placeholder="Your name"
+          className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
+        /> {/* vornato */}
+        <input
+          name="contact"
+          placeholder="Email or Telegram"
+          className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
+        /> {/* vornato */}
+        <textarea
+          name="message"
+          placeholder="Project details"
+          className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]"
+        /> {/* vornato */}
+        <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
+      </form>
+      <p className="mt-3 text-xs text-zinc-400">
+        Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.
+      </p>
+    </div>
+  </div>
+</Section>
+
 
       <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">© {new Date().getFullYear()} Levani Esitashvili — Portfolio</footer> {/* vornato */}
 
