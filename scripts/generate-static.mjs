@@ -1,78 +1,55 @@
-// scripts/generate-static.cjs
-// Create index.html + 404.html that load the client bundle on GitHub Pages.
-
+// scripts/generate-static.mjs
 import fs from "node:fs";
 import path from "node:path";
 
-const CLIENT_DIR = path.join(process.cwd(), "build", "client");
-const ASSETS_DIR = path.join(CLIENT_DIR, "assets");
-const MANIFEST_PATH = path.join(CLIENT_DIR, ".vite", "manifest.json");
+const manifestPath = path.join("build", "client", ".vite", "manifest.json");
+if (!fs.existsSync(manifestPath)) {
+  console.error("❌ Manifest not found at:", manifestPath);
+  process.exit(1);
+}
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
 
-/** Try manifest first, fall back to scanning /assets */
-function getFiles() {
-  let entryJs = null;
-  let rootCss = null;
-
-  try {
-    const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
-    // Find the entry.client chunk
-    const entryKey = Object.keys(manifest).find(k =>
-      /entry\.client\.(t|j)sx?$/.test(k)
-    );
-    if (entryKey) {
-      entryJs = manifest[entryKey].file; // e.g. assets/entry.client-XXXX.js
-    }
-    // Find a root-*.css (React Router builds emit it)
-    const cssKey = Object.keys(manifest).find(k =>
-      /root\.(t|j)sx?$/.test(k)
-    );
-    if (cssKey && manifest[cssKey].css && manifest[cssKey].css[0]) {
-      rootCss = manifest[cssKey].css[0]; // e.g. assets/root-XXXX.css
-    }
-  } catch {
-    // no-op; will scan below
+const entry = Object.values(manifest).find((m) =>
+  String(m.file || "").includes("entry.client")
+);
+const css = [];
+if (entry?.css) css.push(...entry.css);
+for (const v of Object.values(manifest)) {
+  if (v && v.file?.includes("root-") && Array.isArray(v.css)) {
+    css.push(...v.css);
   }
-
-  const files = fs.readdirSync(ASSETS_DIR);
-
-  if (!entryJs) {
-    const e = files.find(f => /^entry\.client-.*\.js$/.test(f));
-    if (e) entryJs = `assets/${e}`;
-  }
-
-  if (!rootCss) {
-    const c = files.find(f => /^root-.*\.css$/.test(f));
-    if (c) rootCss = `assets/${c}`;
-  }
-
-  if (!entryJs) {
-    throw new Error("Could not find entry.client-*.js in build/client/assets");
-  }
-  return { entryJs, rootCss };
 }
 
-function makeHtml({ entryJs, rootCss }) {
-  // Paths are relative to /Portfolio/ because these files sit at build/client/
-  return `<!doctype html>
+const base = "/Portfolio/";
+const cssLinks = css
+  .map((c) => `<link rel="stylesheet" href="${base}${c}">`)
+  .join("\n    ");
+const html = `<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VorNato — Portfolio</title>
-  ${rootCss ? `<link rel="stylesheet" href="${rootCss}" />` : ""}
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="${entryJs}"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1"
+    />
+    <title>Portfolio</title>
+    ${cssLinks}
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // make sure GH Pages paths behave like a SPA
+      (function() {
+        var base = "${base}".replace(/\\/$/, "/");
+        if (!location.pathname.startsWith(base)) {
+          location.replace(base);
+        }
+      })();
+    </script>
+    <script type="module" src="${base}${entry.file}"></script>
+  </body>
 </html>`;
-}
 
-const { entryJs, rootCss } = getFiles();
-const html = makeHtml({ entryJs, rootCss });
-
-// Write both files so GH Pages serves SPA and deep links
-fs.writeFileSync(path.join(CLIENT_DIR, "index.html"), html);
-fs.writeFileSync(path.join(CLIENT_DIR, "404.html"), html);
-
-console.log("✅ Wrote build/client/index.html and 404.html");
+const out404 = path.join("build", "client", "404.html");
+fs.writeFileSync(out404, html);
+console.log("✅ Wrote", out404);

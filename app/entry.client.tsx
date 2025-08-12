@@ -7,8 +7,11 @@ import Root from "./root";
 import IndexPage from "./routes/_index";
 import Home from "./routes/home";
 
+// Vite sets BASE_URL to "/Portfolio/" when base is configured.
+// We strip the trailing slash so Router basename is "/Portfolio"
 const BASENAME = (import.meta.env.BASE_URL || "/Portfolio/").replace(/\/+$/, "");
 
+// Create a plain browser router (SPA) – perfect for GitHub Pages
 const router = createBrowserRouter(
   [
     {
@@ -17,7 +20,7 @@ const router = createBrowserRouter(
       children: [
         { index: true, element: <IndexPage /> },
         { path: "home", element: <Home /> },
-        // Fallback for GH Pages deep links
+        // Fallback for deep links on GH Pages (hard refresh)
         { path: "*", element: <IndexPage /> },
       ],
     },
@@ -25,6 +28,7 @@ const router = createBrowserRouter(
   { basename: BASENAME }
 );
 
+// Hydrate into the <div id="root"></div> that your static index.html contains
 hydrateRoot(
   document.getElementById("root")!,
   <StrictMode>
