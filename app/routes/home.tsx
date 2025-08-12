@@ -22,7 +22,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 
 // ==================== CONFIG you can change ====================
 // vornato: Your photo URL
-const PHOTO_URL = "/Mainc.png"; // vornato
+const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 
 // vornato: Small YouTube avatar (compact & crisp)
 const YT_AVATAR_URL =
@@ -97,7 +97,7 @@ const youtubeItems: PortfolioItem[] = [
 ];
 
 // Fiverr (single big card → Behance)
-const fiverrCover = "/fiverr.png"; // vornato: change to /fiverr.jpg or /fiverr.webp to match your public file
+const fiverrCover = `${import.meta.env.BASE_URL}fiverr.png`;
 
 // Fantasy (3 Shorts)
 const fantasyItems: PortfolioItem[] = [
