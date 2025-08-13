@@ -25,7 +25,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 
 // vornato: Small YouTube avatar (use local /public/profile.jpg)
-const YT_AVATAR_URL = "/profile.jpg"; // vornato: changed to profile.jpg in public/
+const YT_AVATAR_URL = "/profile.jpg"; // vornato: uses profile.jpg in public/
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
 
 // vornato: Quick contact chips (top on mobile)
@@ -36,6 +36,35 @@ const quickLinks = [
   { label: "Behance: vornato", href: "https://www.behance.net/vornato" }, // vornato
   { label: "Fiverr", href: "https://www.fiverr.com/sellers/vornatoofficial" }, // vornato
   { label: "Upwork", href: "https://www.upwork.com/freelancers/~012da965c61594d259" }, // vornato
+];
+
+// vornato: Social buttons (icons pulled from Simple Icons CDN)
+const socials = [
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/levani.esitashvili.1", // vornato
+    icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/facebook.svg",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/levani_esita/", // vornato
+    icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/instagram.svg",
+  },
+  {
+    name: "Behance",
+    href: "https://www.behance.net/vornato", // vornato
+    icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/behance.svg",
+  },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/in/levani-esitashvili/", // vornato
+    icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/linkedin.svg",
+  },
+  {
+    name: "Fiverr",
+    href: "https://www.fiverr.com/s/xXoPYLZ", // vornato
+    icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/fiverr.svg",
+  },
 ];
 
 // ==== Data types ====
@@ -113,10 +142,11 @@ const sectionOrder = ["hero","casino","sports","events","slots","youtube","fiver
 const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({ id, title, subtitle, badge, children }) => (
   <section
     id={id}
-    className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20 scroll-mt-20" // vornato: scroll-mt offset + tighter mobile padding
+    /* vornato: slightly shorter than screen on mobile/tablet so sections overlap a bit while scrolling */
+    className="relative snap-start min-h-[88vh] md:min-h-[92vh] lg:min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 scroll-mt-20"
   >
     <div className="w-full">
-      <div className="mb-8 sm:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           {badge && (<Badge className="mb-3 rounded-2xl px-3 py-1 text-xs">{badge}</Badge>)}
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
@@ -167,7 +197,6 @@ const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: Portfo
 );
 
 /** ---------- Dynamic Background (gears + shapes that react to scroll) ---------- */
-// vornato: tweak these if you want the gears faster/slower by default
 const BASE_GEAR_DURATIONS = [36, 28, 22]; // seconds for gear 1/2/3 when idle
 
 function useScrollSpeed() {
@@ -184,15 +213,13 @@ function useScrollSpeed() {
       const dt = Math.max(16, t - last.current.t);
       last.current = { y, t };
 
-      // Spike quickly based on instantaneous scroll velocity
       const instant = Math.min(1, (dy / dt) / 2);
       setSpeed((s) => Math.max(instant, s));
 
-      // Start a gentle decay at ~8 fps (throttled)
       if (decayTimer.current == null) {
         decayTimer.current = window.setInterval(() => {
           setSpeed((s) => {
-            const next = s * 0.85 + 0.018; // tends toward ~0.12
+            const next = s * 0.85 + 0.018;
             if (next <= 0.121) {
               if (decayTimer.current) {
                 clearInterval(decayTimer.current);
@@ -202,7 +229,7 @@ function useScrollSpeed() {
             }
             return next;
           });
-        }, 120); // ~8 fps
+        }, 120);
       }
     };
 
@@ -293,7 +320,6 @@ const BackgroundMotion: React.FC = () => {
       </motion.div>
 
       {[...Array(12)].map((_, i) => (
-        // Outer wrapper: speed-reactive spin
         <motion.div
           key={i}
           className="absolute"
@@ -304,7 +330,6 @@ const BackgroundMotion: React.FC = () => {
           animate={{ rotate: 360 }}
           transition={{ duration: (18 + i * 1.2) / (0.4 + speed), repeat: Infinity, ease: "linear" }}
         >
-          {/* Inner: slow wander for parallax */}
           <motion.div
             className="border border-white/14 rounded-xl"
             style={{ width: 70 + (i % 4) * 28, height: 70 + ((i + 2) % 4) * 28 }}
@@ -314,7 +339,6 @@ const BackgroundMotion: React.FC = () => {
         </motion.div>
       ))}
       {[...Array(6)].map((_, i) => (
-        // Outer rotating ring (speed-reactive)
         <motion.div
           key={`ring-${i}`}
           className="absolute"
@@ -322,7 +346,6 @@ const BackgroundMotion: React.FC = () => {
           animate={{ rotate: 360 }}
           transition={{ duration: (22 + i) / (0.4 + speed), repeat: Infinity, ease: "linear" }}
         >
-          {/* Inner pulsing disc */}
           <motion.div
             animate={{ scale: [0.85, 1.12, 0.85], opacity: [0.25, 0.45, 0.25] }}
             transition={{ duration: 10 + i, repeat: Infinity, ease: "easeInOut" }}
@@ -453,7 +476,6 @@ const FlyingBadge: React.FC<{
 
   const currentKey = sectionOrder[currentIdx] || "hero";
 
-  // Positioning depending on state
   const containerClass = dropped
     ? "fixed left-1/2 bottom-6 z-30 -translate-x-1/2"
     : "fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2";
@@ -466,13 +488,11 @@ const FlyingBadge: React.FC<{
         title={dropped ? "Click to resume floating" : "Click to drop here"}
         onClick={onToggle}
         className="pointer-events-auto focus:outline-none"
-        // When dropped: hold still with a tiny idle pulse. When floating: follow transforms.
         style={dropped ? undefined : { x }}
         animate={dropped ? { y: 0, rotate: 0, scale: 1 } : undefined}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         <motion.div
-          // Rotate/scale only when not dropped
           style={dropped ? undefined : { rotate, scale }}
           className="relative h-28 w-28 sm:h-36 sm:w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
           whileTap={{ scale: 0.96 }}
@@ -503,7 +523,6 @@ function posterPlaceholder({ label, orientation = "horizontal" }: { label: strin
 }
 
 /** ---------- Smooth scroll helpers (no visual change) ---------- */
-// vornato: ensure smooth behavior everywhere (desktop + mobile)
 function handleNavClick(e: React.MouseEvent<HTMLElement>, targetId: string) {
   e.preventDefault();
   const el = document.getElementById(targetId);
@@ -514,11 +533,9 @@ function handleNavClick(e: React.MouseEvent<HTMLElement>, targetId: string) {
 
 export default function LevaniPortfolio() {
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
-
-  // NEW: state to control the badge toggle
   const [badgeDropped, setBadgeDropped] = useState(false);
 
-  // Smooth scrolling globally (fallback for browsers that don't default it)
+  // Smooth scrolling globally
   useEffect(() => {
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
@@ -552,7 +569,7 @@ export default function LevaniPortfolio() {
   };
 
   return (
-    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-mandatory bg-[#0B0B13]">
+    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-proximity bg-[#0B0B13]">
       {/* Background (modern motion scene) */}
       <BackgroundMotion />
 
@@ -576,12 +593,37 @@ export default function LevaniPortfolio() {
       </header>
 
       {/* HERO */}
-      <section className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-16 sm:pb-20 scroll-mt-20" id="hero">
+      <section className="relative snap-start min-h-[88vh] md:min-h-[92vh] lg:min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-12 sm:pb-16 lg:pb-20 scroll-mt-20" id="hero">
+        {/* Socials row (clickable buttons with icons) */}
+        <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
+          {socials.map((s) => (
+            <a
+              key={s.name}
+              href={s.href}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 px-3 py-2 ring-1 ring-zinc-800 hover:ring-zinc-600 text-xs sm:text-sm transition"
+              aria-label={s.name}
+              title={s.name}
+            >
+              <img
+                src={s.icon}
+                alt={`${s.name} icon`}
+                className="w-4 h-4 sm:w-5 sm:h-5"
+                style={{ filter: "invert(1) brightness(1.2)" }} /* make SVG white */
+              />
+              <span className="text-zinc-100">{s.name}</span>
+            </a>
+          ))}
+        </div>
+
+        {/* Quick links row (mobile chips) */}
         <div className="mb-6 flex md:hidden gap-2 overflow-x-auto">
           {quickLinks.map((q, i) => (
             <a key={i} href={q.href} className="flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-2 text-xs ring-1 ring-zinc-800">{q.label}</a>
           ))}
         </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center w-full">
           {/* Photo card with "Click it" + edge arrows */}
           <div className="relative">
@@ -661,7 +703,7 @@ export default function LevaniPortfolio() {
       <Section id="youtube" title="YouTube" subtitle="Latest edits and uploads from the VorNato channel." badge="Channel"> {/* vornato */}
         <div className="mb-8 flex items-center gap-4">
           <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden ring-4 ring-red-500/70 shadow-lg">
-            <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" /> {/* vornato: now uses /profile.jpg */}
+            <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" /> {/* vornato */}
           </div>
           <div className="flex items-center gap-3">
             <a href="https://youtube.com/@vornatoofficial" target="_blank" rel="noreferrer">
