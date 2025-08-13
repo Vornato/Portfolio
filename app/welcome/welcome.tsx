@@ -1,7 +1,7 @@
 // Updated with // vornato comments for easy editing
 // All editable text, links, images, and video sources now marked with // vornato
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 // --- Minimal UI components (kept in-file so the project works standalone) ---
@@ -24,11 +24,9 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 // vornato: Your photo URL
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 
-// vornato: Small YouTube avatar (compact & crisp)
-// vornato: Small YouTube avatar (local copy in /public/)
-const YT_AVATAR_URL = "/vornato-avatar.jpg"; // place vornato-avatar.jpg in public/
+// vornato: Small YouTube avatar (use local /public/profile.jpg)
+const YT_AVATAR_URL = "/profile.jpg"; // vornato: changed to profile.jpg in public/
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
-
 
 // vornato: Quick contact chips (top on mobile)
 const quickLinks = [
@@ -113,15 +111,24 @@ const sectionOrder = ["hero","casino","sports","events","slots","youtube","fiver
 
 // ==================== Helper Components ====================
 const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({ id, title, subtitle, badge, children }) => (
-  <section id={id} className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
+  <section
+    id={id}
+    className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20 scroll-mt-20" // vornato: scroll-mt offset + tighter mobile padding
+  >
     <div className="w-full">
-      <div className="mb-10 flex items-end justify-between">
+      <div className="mb-8 sm:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           {badge && (<Badge className="mb-3 rounded-2xl px-3 py-1 text-xs">{badge}</Badge>)}
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
           {subtitle && (<p className="mt-2 text-zinc-300 max-w-2xl leading-relaxed">{subtitle}</p>)}
         </div>
-        <a href="#top" className="hidden md:inline-flex items-center text-zinc-400 hover:text-white text-sm">Back to top</a>
+        <a
+          href="#top"
+          onClick={(e) => handleNavClick(e, "top")}
+          className="md:inline-flex items-center text-zinc-400 hover:text-white text-sm"
+        >
+          Back to top
+        </a>
       </div>
       {children}
     </div>
@@ -133,13 +140,13 @@ const Poster: React.FC<{ item: PortfolioItem }> = ({ item }) => (
   <img
     src={item.poster}
     alt={item.title}
-    className={`w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100 ${item.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"}`}
+    className={`w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100 ${item.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"} rounded-2xl`}
   />
 );
 
 // Grid
 const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: PortfolioItem) => void }> = ({ items, onSelect }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
     {items.map((it, i) => (
       <button
         key={i}
@@ -211,7 +218,6 @@ function useScrollSpeed() {
 
   return speed;
 }
-
 
 const GearSVG: React.FC<{ size: number; teeth?: number; stroke?: string }> = ({ size, teeth = 8, stroke = "rgba(153,153,255,0.55)" }) => {
   const r = size / 2;
@@ -468,10 +474,10 @@ const FlyingBadge: React.FC<{
         <motion.div
           // Rotate/scale only when not dropped
           style={dropped ? undefined : { rotate, scale }}
-          className="relative h-36 w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
+          className="relative h-28 w-28 sm:h-36 sm:w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
           whileTap={{ scale: 0.96 }}
         >
-          <div className="select-none text-2xl font-black tracking-widest mix-blend-screen text-white">
+          <div className="select-none text-xl sm:text-2xl font-black tracking-widest mix-blend-screen text-white">
             {labels[currentKey]}
           </div>
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
@@ -496,11 +502,29 @@ function posterPlaceholder({ label, orientation = "horizontal" }: { label: strin
   return `data:image/svg+xml;utf8,${svg}`;
 }
 
+/** ---------- Smooth scroll helpers (no visual change) ---------- */
+// vornato: ensure smooth behavior everywhere (desktop + mobile)
+function handleNavClick(e: React.MouseEvent<HTMLElement>, targetId: string) {
+  e.preventDefault();
+  const el = document.getElementById(targetId);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
 export default function LevaniPortfolio() {
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
 
   // NEW: state to control the badge toggle
   const [badgeDropped, setBadgeDropped] = useState(false);
+
+  // Smooth scrolling globally (fallback for browsers that don't default it)
+  useEffect(() => {
+    const html = document.documentElement;
+    const prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = "smooth";
+    return () => { html.style.scrollBehavior = prev; };
+  }, []);
 
   // --- Runtime tests (cheap sanity checks) ---
   useEffect(() => {
@@ -535,30 +559,30 @@ export default function LevaniPortfolio() {
       {/* NAV */}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60 bg-zinc-900/70 border-b border-zinc-800">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
-          <a href="#top" className="flex items-center gap-2 font-bold tracking-wide">Levani Esitashvili</a> {/* vornato */}
-          <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-300">
-            <a href="#casino" className="hover:text-white">Casino</a>
-            <a href="#sports" className="hover:text-white">Sports</a>
-            <a href="#events" className="hover:text-white">Events & Clubs</a> {/* vornato */}
-            <a href="#slots" className="hover:text-white">Slots</a>
-            <a href="#youtube" className="hover:text-white">YouTube</a>
-            <a href="#fiverr" className="hover:text-white">Fiverr</a>
-            <a href="#fantasy" className="hover:text-white">Fantasy</a>
-            <a href="#experience" className="hover:text-white">Experience</a>
-            <a href="#contact" className="hover:text-white">Contact</a>
+          <a href="#top" onClick={(e) => handleNavClick(e, "top")} className="flex items-center gap-2 font-bold tracking-wide">Levani Esitashvili</a> {/* vornato */}
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm text-zinc-300">
+            <a href="#casino" onClick={(e) => handleNavClick(e, "casino")} className="hover:text-white">Casino</a>
+            <a href="#sports" onClick={(e) => handleNavClick(e, "sports")} className="hover:text-white">Sports</a>
+            <a href="#events" onClick={(e) => handleNavClick(e, "events")} className="hover:text-white">Events & Clubs</a> {/* vornato */}
+            <a href="#slots" onClick={(e) => handleNavClick(e, "slots")} className="hover:text-white">Slots</a>
+            <a href="#youtube" onClick={(e) => handleNavClick(e, "youtube")} className="hover:text-white">YouTube</a>
+            <a href="#fiverr" onClick={(e) => handleNavClick(e, "fiverr")} className="hover:text-white">Fiverr</a>
+            <a href="#fantasy" onClick={(e) => handleNavClick(e, "fantasy")} className="hover:text-white">Fantasy</a>
+            <a href="#experience" onClick={(e) => handleNavClick(e, "experience")} className="hover:text-white">Experience</a>
+            <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="hover:text-white">Contact</a>
           </nav>
-          <a href="#contact" className="md:hidden inline-flex items-center gap-2 text-sm text-zinc-200">Contact</a>
+          <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="md:hidden inline-flex items-center gap-2 text-sm text-zinc-200">Contact</a>
         </div>
       </header>
 
       {/* HERO */}
-      <section className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-20">
+      <section className="relative snap-start min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-16 sm:pb-20 scroll-mt-20" id="hero">
         <div className="mb-6 flex md:hidden gap-2 overflow-x-auto">
           {quickLinks.map((q, i) => (
             <a key={i} href={q.href} className="flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-2 text-xs ring-1 ring-zinc-800">{q.label}</a>
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center w-full">
           {/* Photo card with "Click it" + edge arrows */}
           <div className="relative">
             <a
@@ -586,13 +610,13 @@ export default function LevaniPortfolio() {
             </div>
           </div>
           <div>
-            <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight">Video Editor & After Effects Specialist</h1> {/* vornato */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">Video Editor & After Effects Specialist</h1> {/* vornato */}
             <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">
               I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
             </p> {/* vornato */}
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#casino"><Button className="rounded-2xl">View Work</Button></a> {/* vornato */}
-              <a href="#contact"><Button variant="secondary" className="rounded-2xl">Hire Me</Button></a> {/* vornato */}
+              <a href="#casino" onClick={(e) => handleNavClick(e, "casino")}><Button className="rounded-2xl">View Work</Button></a> {/* vornato */}
+              <a href="#contact" onClick={(e) => handleNavClick(e, "contact")}><Button variant="secondary" className="rounded-2xl">Hire Me</Button></a> {/* vornato */}
             </div>
           </div>
         </div>
@@ -637,7 +661,7 @@ export default function LevaniPortfolio() {
       <Section id="youtube" title="YouTube" subtitle="Latest edits and uploads from the VorNato channel." badge="Channel"> {/* vornato */}
         <div className="mb-8 flex items-center gap-4">
           <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden ring-4 ring-red-500/70 shadow-lg">
-            <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" /> {/* vornato */}
+            <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" /> {/* vornato: now uses /profile.jpg */}
           </div>
           <div className="flex items-center gap-3">
             <a href="https://youtube.com/@vornatoofficial" target="_blank" rel="noreferrer">
@@ -714,62 +738,58 @@ export default function LevaniPortfolio() {
       </Section>
 
       <Section id="contact" title="Contact" subtitle="Let’s build something bold."> {/* vornato */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-      <a
-        href="mailto:levaniesitashvili1999@gmail.com"
-        className="flex items-center gap-3 text-zinc-200 hover:underline"
-      >
-        ✉️ levaniesitashvili1999@gmail.com
-      </a> {/* vornato */}
-    </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+            <a
+              href="mailto:levaniesitashvili1999@gmail.com"
+              className="flex items-center gap-3 text-zinc-200 hover:underline"
+            >
+              ✉️ levaniesitashvili1999@gmail.com
+            </a> {/* vornato */}
+          </div>
 
-    {/* YouTube channel card (optional extra) */}
-    <a
-      href="https://youtube.com/@vornatoofficial" // vornato
-      target="_blank"
-      rel="noopener noreferrer"
-      className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
-    >
-      <img
-  src={YT_COVER_URL}
-  alt="YouTube channel cover"
-  className="w-full aspect-[16/6] object-cover rounded-xl"
-  loading="lazy"
-/>
+          {/* YouTube channel card (optional extra) */}
+          <a
+            href="https://youtube.com/@vornatoofficial" // vornato
+            target="_blank"
+            rel="noopener noreferrer"
+            className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
+          >
+            <img
+              src={YT_COVER_URL}
+              alt="YouTube channel cover"
+              className="w-full aspect-[16/6] object-cover rounded-xl"
+              loading="lazy"
+            />
+            <Button className="rounded-2xl">YouTube Channel</Button>
+          </a>
 
-
-
-      <Button className="rounded-2xl">YouTube Channel</Button>
-    </a>
-
-    {/* Contact form that opens mail client */}
-    <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-      <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
-        <input
-          name="name"
-          placeholder="Your name"
-          className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
-        /> {/* vornato */}
-        <input
-          name="contact"
-          placeholder="Email or Telegram"
-          className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
-        /> {/* vornato */}
-        <textarea
-          name="message"
-          placeholder="Project details"
-          className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]"
-        /> {/* vornato */}
-        <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
-      </form>
-      <p className="mt-3 text-xs text-zinc-400">
-        Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.
-      </p>
-    </div>
-  </div>
-</Section>
-
+          {/* Contact form that opens mail client */}
+          <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+            <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
+              <input
+                name="name"
+                placeholder="Your name"
+                className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
+              /> {/* vornato */}
+              <input
+                name="contact"
+                placeholder="Email or Telegram"
+                className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
+              /> {/* vornato */}
+              <textarea
+                name="message"
+                placeholder="Project details"
+                className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]"
+              /> {/* vornato */}
+              <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button> {/* vornato */}
+            </form>
+            <p className="mt-3 text-xs text-zinc-400">
+              Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.
+            </p>
+          </div>
+        </div>
+      </Section>
 
       <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">© {new Date().getFullYear()} Levani Esitashvili — Portfolio</footer> {/* vornato */}
 
