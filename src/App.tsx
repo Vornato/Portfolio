@@ -23,7 +23,7 @@ export default function App() {
 
           {/* Keep legacy/demo routes accessible */}
           <Route path="/home" element={<HomeRoute />} />
-          <Route path="/index" element={<IndexRoute />} />
+          <Route path="/_index" element={<IndexRoute />} />
           <Route path="/welcome" element={<Welcome />} />
 
           {/* Fallback: any unknown path -> home */}
