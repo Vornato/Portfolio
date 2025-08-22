@@ -8,7 +8,7 @@ import "./styles.css"; // and styles.css contains:  @import "tailwindcss";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter basename="/Portfolio">
+    <BrowserRouter basename="/Portfolio/">
       <App />
     </BrowserRouter>
   </React.StrictMode>
