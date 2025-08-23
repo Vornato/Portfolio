@@ -675,7 +675,7 @@ export default function LevaniPortfolio() {
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
               <h3 className="font-semibold mb-2">Roles</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>Senior Motion/Video Editor — BluePlanet Software Solutions</li>
+                <li>Senior Motion/Video Editor — NovaTech Software Solutions</li>
                 <li>Freelance Video Editor — Fiverr & Upwork (ongoing)</li>
                 <li>Content Creator — YouTube (Vornato)</li>
               </ul>
