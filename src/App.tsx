@@ -20,7 +20,7 @@ export default function App() {
         <Routes>
   <Route path="/" element={<Welcome />} />
   <Route path="/home" element={<HomeRoute />} />
-  <Route path="/index" element={<IndexRoute />} />   {/* was "/_index" */}
+  <Route path="/index" element={<IndexRoute />} />   {/* <-- this */}
   <Route path="/welcome" element={<Welcome />} />
   <Route path="*" element={<Navigate to="/" replace />} />
 </Routes>
