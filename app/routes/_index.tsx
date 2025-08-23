@@ -17,7 +17,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 };
 
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
-const YT_AVATAR_URL = "/profile.jpg";
+const YT_AVATAR_URL = `${import.meta.env.BASE_URL}profile.jpg`;
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
 
 const quickLinks = [
