@@ -18,17 +18,12 @@ export default function App() {
 
       <div className="flex-1">
         <Routes>
-          {/* SHOW YOUR REAL SITE AT ROOT */}
-          <Route path="/" element={<Welcome />} />
-
-          {/* Keep legacy/demo routes accessible */}
-          <Route path="/home" element={<HomeRoute />} />
-          <Route path="/_index" element={<IndexRoute />} />
-          <Route path="/welcome" element={<Welcome />} />
-
-          {/* Fallback: any unknown path -> home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+  <Route path="/" element={<Welcome />} />
+  <Route path="/home" element={<HomeRoute />} />
+  <Route path="/index" element={<IndexRoute />} />   {/* was "/_index" */}
+  <Route path="/welcome" element={<Welcome />} />
+  <Route path="*" element={<Navigate to="/" replace />} />
+</Routes>
       </div>
     </div>
   );
