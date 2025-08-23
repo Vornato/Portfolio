@@ -32,7 +32,6 @@ jobs:
       - name: Build
         run: |
           npm run build
-          # optional but fine (you already have postbuild too)
           cp dist/index.html dist/404.html || true
 
       - name: Upload artifact
