@@ -443,10 +443,10 @@ const FlyingBadge: React.FC<{
       >
         <motion.div
           style={dropped ? undefined : { rotate, scale }}
-          className="relative h-36 w-36 sm:h-48 sm:w-48 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/35 flex items-center justify-center backdrop-blur"
+          className="relative h-12 w-12 sm:h-12 sm:w-12 rounded-2xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/35 flex items-center justify-center backdrop-blur"
           whileTap={{ scale: 0.96 }}
         >
-          <div className="select-none text-3xl sm:text-4xl font-black tracking-widest mix-blend-screen text-white">
+          <div className="select-none text-3xl sm:text-3xl font-black tracking-widest mix-blend-screen text-white">
             {labels[currentKey]}
           </div>
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />

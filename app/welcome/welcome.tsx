@@ -9,10 +9,12 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
   className = "",
   ...props
 }) => {
-  const base = "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-xl transition focus:outline-none focus:ring-2 focus:ring-offset-0";
-  const styles = variant === "secondary"
-    ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700 focus:ring-zinc-600"
-    : "bg-white text-black hover:bg-zinc-200 focus:ring-white";
+  const base =
+    "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-xl transition focus:outline-none focus:ring-2 focus:ring-offset-0";
+  const styles =
+    variant === "secondary"
+      ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700 focus:ring-zinc-600"
+      : "bg-white text-black hover:bg-zinc-200 focus:ring-white";
   return <button className={`${base} ${styles} ${className}`} {...props} />;
 };
 
@@ -95,9 +97,15 @@ const fantasyItems: PortfolioItem[] = [
   { title: "Fantasy Short 3", tag: "Fantasy", provider: "youtube", embedId: "wqPAeIhHqgg", poster: "https://img.youtube.com/vi/wqPAeIhHqgg/maxresdefault.jpg", orientation: "vertical" },
 ];
 
-const sectionOrder = ["hero","casino","sports","events","slots","youtube","fiverr","fantasy","experience","contact"] as const;
+const sectionOrder = ["hero", "casino", "sports", "events", "slots", "youtube", "fiverr", "fantasy", "experience", "contact"] as const;
 
-const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({ id, title, subtitle, badge, children }) => (
+const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({
+  id,
+  title,
+  subtitle,
+  badge,
+  children,
+}) => (
   <section
     id={id}
     className="relative snap-start min-h-[88vh] md:min-h-[92vh] lg:min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 scroll-mt-20"
@@ -105,15 +113,11 @@ const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: 
     <div className="w-full">
       <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          {badge && (<Badge className="mb-3 rounded-2xl px-3 py-1 text-xs">{badge}</Badge>)}
+          {badge && <Badge className="mb-3 rounded-2xl px-3 py-1 text-xs">{badge}</Badge>}
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
-          {subtitle && (<p className="mt-2 text-zinc-300 max-w-2xl leading-relaxed">{subtitle}</p>)}
+          {subtitle && <p className="mt-2 text-zinc-300 max-w-2xl leading-relaxed">{subtitle}</p>}
         </div>
-        <a
-          href="#top"
-          onClick={(e) => handleNavClick(e, "top")}
-          className="md:inline-flex items-center text-zinc-400 hover:text-white text-sm"
-        >
+        <a href="#top" onClick={(e) => handleNavClick(e, "top")} className="md:inline-flex items-center text-zinc-400 hover:text-white text-sm">
           Back to top
         </a>
       </div>
@@ -126,7 +130,9 @@ const Poster: React.FC<{ item: PortfolioItem }> = ({ item }) => (
   <img
     src={item.poster}
     alt={item.title}
-    className={`w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100 ${item.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"} rounded-2xl`}
+    className={`w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100 ${
+      item.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"
+    } rounded-2xl`}
   />
 );
 
@@ -165,7 +171,7 @@ function useScrollSpeed() {
       const dy = Math.abs(y - last.current.y);
       const dt = Math.max(16, t - last.current.t);
       last.current = { y, t };
-      const instant = Math.min(1, (dy / dt) / 2);
+      const instant = Math.min(1, dy / dt / 2);
       setSpeed((s) => Math.max(instant, s));
       if (decayTimer.current == null) {
         decayTimer.current = window.setInterval(() => {
@@ -274,7 +280,7 @@ const BackgroundMotion: React.FC = () => {
           key={i}
           className="absolute"
           style={{
-            top: `${6 + (i * 8) % 86}%`,
+            top: `${6 + ((i * 8) % 86)}%`,
             left: `${(i * 11) % 92}%`,
           }}
           animate={{ rotate: 360 }}
@@ -282,8 +288,8 @@ const BackgroundMotion: React.FC = () => {
         >
           <motion.div
             className="border border-white/14 rounded-xl"
-            style={{ width: 70 + (i % 4) * 28, height: 70 + ((i + 2) % 4) * 28 }}
-            animate={{ x: [0, (i % 2 ? 70 : -70), 0], y: [0, (i % 2 ? -50 : 50), 0] }}
+            style={{ width: 70 + ((i % 4) * 28), height: 70 + (((i + 2) % 4) * 28) }}
+            animate={{ x: [0, i % 2 ? 70 : -70, 0], y: [0, i % 2 ? -50 : 50, 0] }}
             transition={{ duration: 12 + i * 0.8, repeat: Infinity, ease: "easeInOut" }}
           />
         </motion.div>
@@ -292,7 +298,7 @@ const BackgroundMotion: React.FC = () => {
         <motion.div
           key={`ring-${i}`}
           className="absolute"
-          style={{ top: `${15 + i * 12}%`, left: `${20 + (i * 9) % 60}%` }}
+          style={{ top: `${15 + i * 12}%`, left: `${20 + ((i * 9) % 60)}%` }}
           animate={{ rotate: 360 }}
           transition={{ duration: (22 + i) / (0.4 + speed), repeat: Infinity, ease: "linear" }}
         >
@@ -315,11 +321,7 @@ const BackgroundMotion: React.FC = () => {
 };
 
 const EdgeArrows: React.FC = () => (
-  <motion.div
-    className="pointer-events-none absolute inset-0"
-    animate={{ rotate: 360 }}
-    transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
-  >
+  <motion.div className="pointer-events-none absolute inset-0" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 12, ease: "linear" }}>
     {[
       { top: "8%", left: "50%", transform: "translate(-50%, 0) rotate(0deg)" },
       { top: "50%", left: "92%", transform: "translate(0, -50%) rotate(90deg)" },
@@ -355,28 +357,28 @@ const FlyingBadge: React.FC<{
     const goingLeftToRight = i % 2 === 0;
 
     const tStart = i / steps;
-    const tQ1   = tStart + 0.25 / steps;
-    const tMid  = tStart + 0.50 / steps;
-    const tQ3   = tStart + 0.75 / steps;
-    const tEnd  = (i + 1) / steps;
+    const tQ1 = tStart + 0.25 / steps;
+    const tMid = tStart + 0.5 / steps;
+    const tQ3 = tStart + 0.75 / steps;
+    const tEnd = (i + 1) / steps;
 
     const startEdge = goingLeftToRight ? leftX : rightX;
-    const q1        = goingLeftToRight ? "-22vw" : "22vw";
-    const center    = "0vw";
-    const q3        = goingLeftToRight ? "22vw" : "-22vw";
-    const endEdge   = goingLeftToRight ? rightX : leftX;
+    const q1 = goingLeftToRight ? "-22vw" : "22vw";
+    const center = "0vw";
+    const q3 = goingLeftToRight ? "22vw" : "-22vw";
+    const endEdge = goingLeftToRight ? rightX : leftX;
 
-    const r0  = 180 * i;
+    const r0 = 180 * i;
     const r45 = r0 + 45;
     const r90 = r0 + 90;
-    const r135= r0 + 135;
-    const r180= r0 + 180;
+    const r135 = r0 + 135;
+    const r180 = r0 + 180;
 
-    const s0  = 0.90;
-    const s1  = 1.12;
-    const s2  = 0.98;
-    const s3  = 1.12;
-    const s4  = 0.90;
+    const s0 = 0.92;
+    const s1 = 1.14;
+    const s2 = 1.0;
+    const s3 = 1.14;
+    const s4 = 0.92;
 
     input.push(tStart, tQ1, tMid, tQ3, tEnd);
     xVals.push(startEdge, q1, center, q3, endEdge);
@@ -388,13 +390,13 @@ const FlyingBadge: React.FC<{
     input.push(0, 1);
     xVals.push(leftX, rightX);
     rotVals.push(0, 180);
-    scaleVals.push(0.9, 0.9);
+    scaleVals.push(1, 1);
   }
 
   const { scrollYProgress } = useScroll();
-  const x      = useTransform(scrollYProgress, input, xVals as any);
+  const x = useTransform(scrollYProgress, input, xVals as any);
   const rotate = useTransform(scrollYProgress, input, rotVals);
-  const scale  = useTransform(scrollYProgress, input, scaleVals);
+  const scale = useTransform(scrollYProgress, input, scaleVals);
 
   const labels: Record<string, React.ReactNode> = {
     hero: <span className="text-[#9999FF]">Ae</span>,
@@ -426,6 +428,7 @@ const FlyingBadge: React.FC<{
     ? "fixed left-1/2 bottom-6 z-30 -translate-x-1/2"
     : "fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2";
 
+  // BIGGER BADGE + ICON
   return (
     <div className={containerClass}>
       <motion.button
@@ -440,10 +443,10 @@ const FlyingBadge: React.FC<{
       >
         <motion.div
           style={dropped ? undefined : { rotate, scale }}
-          className="relative h-28 w-28 sm:h-36 sm:w-36 rounded-3xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/30 flex items-center justify-center backdrop-blur"
+          className="relative h-30 w-30 sm:h-30 sm:w-30 rounded-2xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/35 flex items-center justify-center backdrop-blur"
           whileTap={{ scale: 0.96 }}
         >
-          <div className="select-none text-xl sm:text-2xl font-black tracking-widest mix-blend-screen text-white">
+          <div className="select-none text-3xl sm:text-3xl font-black tracking-widest mix-blend-screen text-white">
             {labels[currentKey]}
           </div>
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
@@ -483,7 +486,9 @@ export default function LevaniPortfolio() {
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
     html.style.scrollBehavior = "smooth";
-    return () => { html.style.scrollBehavior = prev; };
+    return () => {
+      html.style.scrollBehavior = prev;
+    };
   }, []);
 
   useEffect(() => {
@@ -513,9 +518,26 @@ export default function LevaniPortfolio() {
     <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-proximity bg-[#0B0B13]">
       <BackgroundMotion />
 
+      {/* ===== TOP BAR like your sketch: left Home pill + name, right nav ===== */}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60 bg-zinc-900/70 border-b border-zinc-800">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
-          <a href="#top" onClick={(e) => handleNavClick(e, "top")} className="flex items-center gap-2 font-bold tracking-wide">Levani Esitashvili</a>
+          <div className="flex items-center gap-3">
+            <a
+              href="#top"
+              onClick={(e) => handleNavClick(e, "top")}
+              className="rounded-lg bg-zinc-800/80 hover:bg-zinc-700 px-3 py-1 text-sm text-zinc-100 ring-1 ring-zinc-700"
+            >
+              Home
+            </a>
+            <a
+              href="#top"
+              onClick={(e) => handleNavClick(e, "top")}
+              className="font-extrabold tracking-wide text-sm sm:text-base text-white"
+            >
+              Levani Esitashvili
+            </a>
+          </div>
+
           <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm text-zinc-300">
             <a href="#casino" onClick={(e) => handleNavClick(e, "casino")} className="hover:text-white">Casino</a>
             <a href="#sports" onClick={(e) => handleNavClick(e, "sports")} className="hover:text-white">Sports</a>
@@ -527,46 +549,26 @@ export default function LevaniPortfolio() {
             <a href="#experience" onClick={(e) => handleNavClick(e, "experience")} className="hover:text-white">Experience</a>
             <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="hover:text-white">Contact</a>
           </nav>
-          <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="md:hidden inline-flex items-center gap-2 text-sm text-zinc-200">Contact</a>
+
+          <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="md:hidden inline-flex items-center gap-2 text-sm text-zinc-200">
+            Contact
+          </a>
         </div>
       </header>
 
-      <section className="relative snap-start min-h-[88vh] md:min-h-[92vh] lg:min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-12 sm:pb-16 lg:pb-20 scroll-mt-20" id="hero">
-        <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
-          {socials.map((s) => (
-            <a
-              key={s.name}
-              href={s.href}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 px-3 py-2 ring-1 ring-zinc-800 hover:ring-zinc-600 text-xs sm:text-sm transition"
-              aria-label={s.name}
-              title={s.name}
-            >
-              <img
-                src={s.icon}
-                alt={`${s.name} icon`}
-                className="w-4 h-4 sm:w-5 sm:h-5"
-                style={{ filter: "invert(1) brightness(1.2)" }}
-              />
-              <span className="text-zinc-100">{s.name}</span>
-            </a>
-          ))}
-        </div>
-
-        <div className="mb-6 flex md:hidden gap-2 overflow-x-auto">
-          {quickLinks.map((q, i) => (
-            <a key={i} href={q.href} className="flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-2 text-xs ring-1 ring-zinc-800">{q.label}</a>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center w-full">
+      {/* ===== HERO re-layout: image on left, social card under image, title on right ===== */}
+      <section
+        className="relative snap-start min-h-[88vh] md:min-h-[92vh] lg:min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-12 sm:pb-16 lg:pb-20 scroll-mt-20"
+        id="hero"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
+          {/* LEFT */}
           <div className="relative">
             <a
               href="https://youtu.be/pPaX34rLRHY"
               target="_blank"
               rel="noreferrer"
-              className="block relative overflow-hidden rounded-3xl ring-1 ring-zinc-800 group"
+              className="block relative overflow-hidden rounded-3xl ring-1 ring-zinc-800/80 group bg-zinc-900/40"
               aria-label="Open intro video"
             >
               <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover" />
@@ -580,31 +582,68 @@ export default function LevaniPortfolio() {
                 <span className="rounded-full bg-black/70 text-white text-xs px-3 py-1 ring-1 ring-white/20 shadow-lg">Click it</span>
               </motion.div>
             </a>
+
+            {/* Social buttons in a rounded card under the image */}
+            <div className="mt-5 rounded-2xl bg-zinc-900/80 ring-1 ring-zinc-800 p-3 sm:p-4 w-full">
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
+                {socials.map((s) => (
+                  <a
+                    key={s.name}
+                    href={s.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-zinc-950/70 hover:bg-zinc-800 px-3 py-2 ring-1 ring-zinc-800 hover:ring-zinc-600 text-xs sm:text-sm transition"
+                    aria-label={s.name}
+                    title={s.name}
+                  >
+                    <img
+                      src={s.icon}
+                      alt={`${s.name} icon`}
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      style={{ filter: "invert(1) brightness(1.2)" }}
+                    />
+                    <span className="text-zinc-100">{s.name}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Chips row like in your sketch, under socials */}
             <div className="mt-4 flex flex-wrap gap-2">
               {["Senior Video Editor", "After Effects / Premiere Pro", "Casino • Sports • Slots", "Social Cutdowns"].map((chip) => (
-                <Badge key={chip} className="rounded-full bg-zinc-900 text-zinc-200 ring-1 ring-zinc-800">{chip}</Badge>
+                <Badge key={chip} className="rounded-full bg-zinc-900 text-zinc-200 ring-1 ring-zinc-800">
+                  {chip}
+                </Badge>
               ))}
             </div>
           </div>
+
+          {/* RIGHT */}
           <div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">Video Editor & After Effects Specialist</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
+              Video Editor & After Effects Specialist
+            </h1>
             <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">
-              I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
+              I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for
+              casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#casino" onClick={(e) => handleNavClick(e, "casino")}><Button className="rounded-2xl">View Work</Button></a>
-              <a href="#contact" onClick={(e) => handleNavClick(e, "contact")}><Button variant="secondary" className="rounded-2xl">Hire Me</Button></a>
+              <a href="#casino" onClick={(e) => handleNavClick(e, "casino")}>
+                <Button className="rounded-2xl">View Work</Button>
+              </a>
+              <a href="#contact" onClick={(e) => handleNavClick(e, "contact")}>
+                <Button variant="secondary" className="rounded-2xl">
+                  Hire Me
+                </Button>
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      <FlyingBadge
-        sectionOrder={[...sectionOrder]}
-        dropped={badgeDropped}
-        onToggle={() => setBadgeDropped((v) => !v)}
-      />
+      <FlyingBadge sectionOrder={[...sectionOrder]} dropped={badgeDropped} onToggle={() => setBadgeDropped((v) => !v)} />
 
+      {/* ==== REST OF YOUR PAGE UNCHANGED ==== */}
       <Section id="casino" title="Casino" subtitle="Trailers, promos, bumpers and motion graphics for casino brands." badge="Portfolio">
         <PortfolioGrid items={casinoItems} onSelect={setSelected} />
       </Section>
@@ -635,11 +674,6 @@ export default function LevaniPortfolio() {
         <div className="mb-8 flex items-center gap-4">
           <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden ring-4 ring-red-500/70 shadow-lg">
             <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex items-center gap-3">
-            <a href="https://youtube.com/@vornatoofficial" target="_blank" rel="noreferrer">
-              <Button className="rounded-2xl">YouTube Channel</Button>
-            </a>
           </div>
         </div>
         <PortfolioGrid items={youtubeItems} onSelect={setSelected} />
@@ -693,7 +727,9 @@ export default function LevaniPortfolio() {
               <h3 className="font-semibold mb-2">Software & Skills</h3>
               <div className="flex flex-wrap gap-2">
                 {["After Effects", "Premiere Pro", "Photoshop", "Illustrator", "Blender", "Cinema 4D"].map((s) => (
-                  <Badge key={s} className="rounded-full bg-zinc-800 text-zinc-200">{s}</Badge>
+                  <Badge key={s} className="rounded-full bg-zinc-800 text-zinc-200">
+                    {s}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -701,7 +737,9 @@ export default function LevaniPortfolio() {
               <h3 className="font-semibold mb-2">Languages</h3>
               <div className="flex flex-wrap gap-2">
                 {["Georgian", "English", "Russian"].map((l) => (
-                  <Badge key={l} className="rounded-full bg-zinc-800 text-zinc-200">{l}</Badge>
+                  <Badge key={l} className="rounded-full bg-zinc-800 text-zinc-200">
+                    {l}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -712,10 +750,7 @@ export default function LevaniPortfolio() {
       <Section id="contact" title="Contact" subtitle="Let’s build something bold.">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-            <a
-              href="mailto:levaniesitashvili1999@gmail.com"
-              className="flex items-center gap-3 text-zinc-200 hover:underline"
-            >
+            <a href="mailto:levaniesitashvili1999@gmail.com" className="flex items-center gap-3 text-zinc-200 hover:underline">
               ✉️ levaniesitashvili1999@gmail.com
             </a>
           </div>
@@ -726,33 +761,22 @@ export default function LevaniPortfolio() {
             rel="noopener noreferrer"
             className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
           >
-            <img
-              src={YT_COVER_URL}
-              alt="YouTube channel cover"
-              className="w-full aspect-[16/6] object-cover rounded-xl"
-              loading="lazy"
-            />
+            <img src={YT_COVER_URL} alt="YouTube channel cover" className="w-full aspect-[16/6] object-cover rounded-xl" loading="lazy" />
             <Button className="rounded-2xl">YouTube Channel</Button>
           </a>
 
           <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
             <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
-              <input
-                name="name"
-                placeholder="Your name"
-                className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
-              />
-              <input
-                name="contact"
-                placeholder="Email or Telegram"
-                className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
-              />
+              <input name="name" placeholder="Your name" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" />
+              <input name="contact" placeholder="Email or Telegram" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" />
               <textarea
                 name="message"
                 placeholder="Project details"
                 className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]"
               />
-              <Button className="sm:col-span-2 rounded-2xl" type="submit">Send</Button>
+              <Button className="sm:col-span-2 rounded-2xl" type="submit">
+                Send
+              </Button>
             </form>
             <p className="mt-3 text-xs text-zinc-400">
               Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.
@@ -761,12 +785,16 @@ export default function LevaniPortfolio() {
         </div>
       </Section>
 
-      <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">© {new Date().getFullYear()} Levani Esitashvili — Portfolio</footer>
+      <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">
+        © {new Date().getFullYear()} Levani Esitashvili — Portfolio
+      </footer>
 
       {selected && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <div className="relative w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
-            <button className="absolute -top-10 right-0 text-zinc-300 hover:text-white" onClick={() => setSelected(null)}>Close</button>
+            <button className="absolute -top-10 right-0 text-zinc-300 hover:text-white" onClick={() => setSelected(null)}>
+              Close
+            </button>
             {selected.provider === "youtube" && selected.embedId ? (
               <div className="w-full aspect-video">
                 <iframe
@@ -778,10 +806,21 @@ export default function LevaniPortfolio() {
                 />
               </div>
             ) : selected.provider === "html5" && selected.src ? (
-              <video className={`${selected.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"} w-full rounded-xl`} src={selected.src} controls playsInline />
+              <video
+                className={`${selected.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"} w-full rounded-xl`}
+                src={selected.src}
+                controls
+                playsInline
+              />
             ) : (
-              <div className={`${selected.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"} w-full bg-zinc-900 rounded-xl ring-1 ring-zinc-800 flex items-center justify-center text-zinc-400`}>
-                <a href={selected.href || "#"} target="_blank" rel="noreferrer" className="underline">Open project</a>
+              <div
+                className={`${
+                  selected.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"
+                } w-full bg-zinc-900 rounded-xl ring-1 ring-zinc-800 flex items-center justify-center text-zinc-400`}
+              >
+                <a href={selected.href || "#"} target="_blank" rel="noreferrer" className="underline">
+                  Open project
+                </a>
               </div>
             )}
           </div>
