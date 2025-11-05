@@ -506,6 +506,8 @@ function handleNavClick(e: React.MouseEvent<HTMLElement>, targetId: string) {
 
 export default function LevaniPortfolio() {
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [toastKind, setToastKind] = useState<"success" | "error" | "info">("info");
   const [badgeDropped, setBadgeDropped] = useState(false);
 
   useEffect(() => {
@@ -529,20 +531,88 @@ export default function LevaniPortfolio() {
     console.assert(Array.isArray(fantasyItems) && fantasyItems.length > 0, "fantasyItems should be defined with items");
   }, []);
 
-  const onContactSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    const onContactSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const name = (fd.get("name") as string) || "";
     const contact = (fd.get("contact") as string) || "";
     const message = (fd.get("message") as string) || "";
+    if (!contact && !message) {
+      setToast("Please include your contact and a short note.");
+      setToastKind("error");
+      window.setTimeout(() => setToast(null), 3000);
+      return;
+    }
+    const endpoint = (import.meta as any).env?.VITE_CONTACT_ENDPOINT as string | undefined;
+    if (endpoint) {
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ source: "portfolio", page: window.location.href, name, contact, message }),
+        });
+        if (res.ok) {
+          setToast("Thanks! Message sent successfully.");
+          setToastKind("success");
+          (e.currentTarget as HTMLFormElement).reset();
+          window.setTimeout(() => setToast(null), 3000);
+          return;
+        }
+      } catch {}
+    }
     const subject = encodeURIComponent(`Portfolio inquiry from ${name || "Website"}`);
     const body = encodeURIComponent(`Contact: ${contact}\n\n${message}`);
-    window.location.href = `mailto:levaniesitashvili1999@gmail.com?subject=${subject}&body=${body}`;
+    if (endpoint) {
+      setToast("Could not send via form. Opening email draft...");
+      setToastKind("error");
+    } else {
+      setToast("Opening your email app with a draft...");
+      setToastKind("info");
+    }
+
+    const to = "levaniesitashvili1999@gmail.com";
+    try {
+      const mailHref = `mailto:${to}?subject=${subject}&body=${body}`;
+      const a = document.createElement("a");
+      a.href = mailHref;
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      const focusedAtClick = document.hasFocus();
+      setTimeout(async () => {
+        if (document.hasFocus() && focusedAtClick) {
+          const gmail = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(to)}&su=${subject}&body=${body}`;
+          const w = window.open(gmail, "_blank", "noopener,noreferrer");
+          if (!w) {
+            try {
+              await navigator.clipboard.writeText(`To: ${to}\nSubject: ${decodeURIComponent(subject)}\n\n${decodeURIComponent(body)}`);
+              setToast("Copied message to clipboard. Paste into your email app.");
+              setToastKind("error");
+            } catch {}
+          } else {
+            setToast("Opened Gmail compose in a new tab.");
+            setToastKind("info");
+          }
+          setTimeout(() => setToast(null), 3500);
+        } else {
+          setTimeout(() => setToast(null), 3000);
+        }
+      }, 900);
+    } catch {
+      setTimeout(() => setToast(null), 3000);
+    }
   };
 
   return (
     <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-proximity bg-[#0B0B13]">
       <BackgroundMotion />
+      {toast && (
+        <div className={`fixed top-16 left-1/2 -translate-x-1/2 z-50 rounded-xl px-4 py-2 text-sm shadow-lg ring-1 ${toastKind === "error" ? "bg-red-600/90 ring-red-300/40" : toastKind === "success" ? "bg-emerald-600/90 ring-emerald-300/40" : "bg-zinc-800/90 ring-zinc-300/40"}`}>
+          {toast}
+        </div>
+      )}
 
       {/* ===== TOP BAR like your sketch: left Home pill + name, right nav ===== */}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60 bg-zinc-900/70 border-b border-zinc-800">
@@ -855,6 +925,7 @@ export default function LevaniPortfolio() {
     </main>
   );
 }
+
 
 
 
