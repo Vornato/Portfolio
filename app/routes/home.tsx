@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 export const Badge: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className = "", ...props }) => (
@@ -50,11 +50,23 @@ type PortfolioItem = {
   orientation?: "vertical" | "horizontal";
 };
 
+// New: Arqi items (YouTube Shorts)
+const arqiItems: PortfolioItem[] = [
+  { title: "Arqi Short 1", tag: "Arqi", provider: "youtube", embedId: "ezDfjyzhPRM", poster: "https://img.youtube.com/vi/ezDfjyzhPRM/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Arqi Short 2", tag: "Arqi", provider: "youtube", embedId: "Leif5tfR-vA", poster: "https://img.youtube.com/vi/Leif5tfR-vA/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Arqi Short 3", tag: "Arqi", provider: "youtube", embedId: "DAG_iJAvdtE", poster: "https://img.youtube.com/vi/DAG_iJAvdtE/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Arqi Short 4", tag: "Arqi", provider: "youtube", embedId: "ashI2x3fJcI", poster: "https://img.youtube.com/vi/ashI2x3fJcI/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Arqi Short 5", tag: "Arqi", provider: "youtube", embedId: "8PAjRGUR_nk", poster: "https://img.youtube.com/vi/8PAjRGUR_nk/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Arqi Short 6", tag: "Arqi", provider: "youtube", embedId: "X2THCukSVrE", poster: "https://img.youtube.com/vi/X2THCukSVrE/maxresdefault.jpg", orientation: "vertical" },
+];
+
 const casinoItems: PortfolioItem[] = [
   { title: "Casino Short 1", tag: "Casino", provider: "youtube", embedId: "upR7VahYFns", poster: "https://img.youtube.com/vi/upR7VahYFns/maxresdefault.jpg", orientation: "vertical" },
   { title: "Casino Short 2", tag: "Casino", provider: "youtube", embedId: "gcNzXB7Suz4", poster: "https://img.youtube.com/vi/gcNzXB7Suz4/maxresdefault.jpg", orientation: "vertical" },
   { title: "Casino Short 3", tag: "Casino", provider: "youtube", embedId: "5x4v_d2RvFc", poster: "https://img.youtube.com/vi/5x4v_d2RvFc/maxresdefault.jpg", orientation: "vertical" },
   { title: "Casino Promo", tag: "Casino", provider: "youtube", embedId: "12I1ZI218g0", poster: "https://img.youtube.com/vi/12I1ZI218g0/maxresdefault.jpg", orientation: "horizontal" },
+  { title: "Casino Short (Shorts)", tag: "Casino", provider: "youtube", embedId: "OUtLS5hc-mw", poster: "https://img.youtube.com/vi/OUtLS5hc-mw/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Casino Short (Shorts)", tag: "Casino", provider: "youtube", embedId: "KoYBF8pH-1o", poster: "https://img.youtube.com/vi/KoYBF8pH-1o/maxresdefault.jpg", orientation: "vertical" },
 ];
 
 const sportsItems: PortfolioItem[] = [
@@ -64,6 +76,9 @@ const sportsItems: PortfolioItem[] = [
   { title: "Sports Short 4", tag: "Sports", provider: "youtube", embedId: "hpGqE-6rxsA", poster: "https://img.youtube.com/vi/hpGqE-6rxsA/maxresdefault.jpg", orientation: "vertical" },
   { title: "Sports Short 5", tag: "Sports", provider: "youtube", embedId: "bT4JhehsXEU", poster: "https://img.youtube.com/vi/bT4JhehsXEU/maxresdefault.jpg", orientation: "vertical" },
   { title: "Sports Short 6", tag: "Sports", provider: "youtube", embedId: "kxHJrAXDAN0", poster: "https://img.youtube.com/vi/kxHJrAXDAN0/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Sports Short (Shorts)", tag: "Sports", provider: "youtube", embedId: "HhxDVWDt9Tg", poster: "https://img.youtube.com/vi/HhxDVWDt9Tg/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Sports Short (Shorts)", tag: "Sports", provider: "youtube", embedId: "bZzFqJvyZgo", poster: "https://img.youtube.com/vi/bZzFqJvyZgo/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Sports Short (Shorts)", tag: "Sports", provider: "youtube", embedId: "WZRLDQU1dqM", poster: "https://img.youtube.com/vi/WZRLDQU1dqM/maxresdefault.jpg", orientation: "vertical" },
 ];
 
 const eventsItems: PortfolioItem[] = [
@@ -97,7 +112,7 @@ const fantasyItems: PortfolioItem[] = [
   { title: "Fantasy Short 3", tag: "Fantasy", provider: "youtube", embedId: "wqPAeIhHqgg", poster: "https://img.youtube.com/vi/wqPAeIhHqgg/maxresdefault.jpg", orientation: "vertical" },
 ];
 
-const sectionOrder = ["hero", "casino", "sports", "events", "slots", "youtube", "fiverr", "fantasy", "experience", "contact"] as const;
+const sectionOrder = ["hero", "casino", "sports", "arqi", "events", "slots", "youtube", "fiverr", "fantasy", "experience", "contact"] as const;
 
 const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({
   id,
@@ -329,11 +344,22 @@ const EdgeArrows: React.FC = () => (
       { top: "50%", left: "8%", transform: "translate(-100%, -50%) rotate(-90deg)" },
     ].map((pos, i) => (
       <div key={i} className="absolute text-white/80 drop-shadow" style={pos as any}>
-        <div className="flex gap-1 text-xl">
-          <span>➤</span>
-          <span>➤</span>
-          <span>➤</span>
-        </div>
+        <div className="flex gap-1 text-xl"><span>ÃƒÂ¢Ã…Â¾Ã‚Â¤</span><span>ÃƒÂ¢Ã…Â¾Ã‚Â¤</span><span>ÃƒÂ¢Ã…Â¾Ã‚Â¤</span></div>
+      </div>
+    ))}
+  </motion.div>
+);
+
+const EdgeArrowsClean: React.FC = () => (
+  <motion.div className="pointer-events-none absolute inset-0" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 12, ease: "linear" }}>
+    {[
+      { top: "8%", left: "50%", transform: "translate(-50%, 0) rotate(0deg)" },
+      { top: "50%", left: "92%", transform: "translate(0, -50%) rotate(90deg)" },
+      { top: "92%", left: "50%", transform: "translate(-50%, -100%) rotate(180deg)" },
+      { top: "50%", left: "8%", transform: "translate(-100%, -50%) rotate(-90deg)" },
+    ].map((pos, i) => (
+      <div key={i} className="absolute text-white/80 drop-shadow" style={pos as any}>
+        <div className="flex gap-1 text-xl"><span>&gt;&gt;&gt;</span><span>&gt;&gt;&gt;</span><span>&gt;&gt;&gt;</span></div>
       </div>
     ))}
   </motion.div>
@@ -344,12 +370,12 @@ const FlyingBadge: React.FC<{
   dropped?: boolean;
   onToggle?: () => void;
 }> = ({ sectionOrder, dropped = false, onToggle }) => {
-  const leftX = "-44vw";
-  const rightX = "44vw";
+  const topY = "-44vh";
+  const bottomY = "44vh";
   const steps = Math.max(1, sectionOrder.length - 1);
 
   const input: number[] = [];
-  const xVals: (string | number)[] = [];
+  const yVals: (string | number)[] = [];
   const rotVals: number[] = [];
   const scaleVals: number[] = [];
 
@@ -362,11 +388,11 @@ const FlyingBadge: React.FC<{
     const tQ3 = tStart + 0.75 / steps;
     const tEnd = (i + 1) / steps;
 
-    const startEdge = goingLeftToRight ? leftX : rightX;
-    const q1 = goingLeftToRight ? "-22vw" : "22vw";
-    const center = "0vw";
-    const q3 = goingLeftToRight ? "22vw" : "-22vw";
-    const endEdge = goingLeftToRight ? rightX : leftX;
+    const startEdge = goingLeftToRight ? topY : bottomY;
+    const q1 = goingLeftToRight ? "-22vh" : "22vh";
+    const center = "0vh";
+    const q3 = goingLeftToRight ? "22vh" : "-22vh";
+    const endEdge = goingLeftToRight ? bottomY : topY;
 
     const r0 = 180 * i;
     const r45 = r0 + 45;
@@ -381,36 +407,49 @@ const FlyingBadge: React.FC<{
     const s4 = 0.92;
 
     input.push(tStart, tQ1, tMid, tQ3, tEnd);
-    xVals.push(startEdge, q1, center, q3, endEdge);
+    yVals.push(startEdge, q1, center, q3, endEdge);
     rotVals.push(r0, r45, r90, r135, r180);
     scaleVals.push(s0, s1, s2, s3, s4);
   }
 
   if (steps === 1 && input.length === 0) {
     input.push(0, 1);
-    xVals.push(leftX, rightX);
+    yVals.push(topY, bottomY);
     rotVals.push(0, 180);
     scaleVals.push(1, 1);
   }
 
   const { scrollYProgress } = useScroll();
-  const x = useTransform(scrollYProgress, input, xVals as any);
+  const y = useTransform(scrollYProgress, input, yVals as any);
   const rotate = useTransform(scrollYProgress, input, rotVals);
   const scale = useTransform(scrollYProgress, input, scaleVals);
 
   const labels: Record<string, React.ReactNode> = {
     hero: <span className="text-[#9999FF]">Ae</span>,
-    casino: <span>🎲</span>,
-    sports: <span>🏆</span>,
-    events: <span>🎉</span>,
-    slots: <span>✨</span>,
-    youtube: <span>▶️</span>,
-    fiverr: <span>💼</span>,
-    fantasy: <span>🎮</span>,
-    experience: <span>🎬</span>,
-    contact: <span>✉️</span>,
+    casino: <span aria-label="casino">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â²</span>,
+    sports: <span aria-label="sports">ÃƒÂ°Ã…Â¸Ã‚ÂÃ¢â‚¬Â </span>,
+    events: <span aria-label="events">ÃƒÂ°Ã…Â¸Ã…Â½Ã¢â‚¬Â°</span>,
+    slots: <span aria-label="slots">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â°</span>,
+    youtube: <span aria-label="youtube">ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â¶ÃƒÂ¯Ã‚Â¸Ã‚Â</span>,
+    fiverr: <span aria-label="fiverr">ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¼</span>,
+    fantasy: <span aria-label="fantasy">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â®</span>,
+    experience: <span aria-label="experience">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬</span>,
+    contact: <span aria-label="contact">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â°ÃƒÂ¯Ã‚Â¸Ã‚Â</span>,
   };
 
+  const emojiBySection: Record<string, string[]> = {
+  hero: ["AE", "🎬", "🎯", "🪄", "🌀"],
+  casino: ["🎰", "🎲", "🃏", "💰"],
+  sports: ["🏆", "⚽", "🏀", "🏈", "🥊"],
+  events: ["🎉", "🎤", "🎞️", "🎪"],
+  slots: ["🎰", "💎", "🍀", "7️⃣"],
+  youtube: ["▶️", "🎥", "📺", "🔔"],
+  fiverr: ["💼", "💚", "⚙️", "🤝"],
+  fantasy: ["🐉", "🧙‍♂️", "🗡️", "🏰", "🎯"],
+  experience: ["🧠", "🛠️", "📈", "🗂️"],
+  contact: ["✉️", "📨", "📞", "💬", "📮"],
+};
+  const [emojiCycle, setEmojiCycle] = React.useState<Record<string, number>>({});
   const [currentIdx, setCurrentIdx] = React.useState(0);
   useEffect(() => {
     const onScroll = () => {
@@ -424,30 +463,41 @@ const FlyingBadge: React.FC<{
   }, [sectionOrder.length]);
 
   const currentKey = sectionOrder[currentIdx] || "hero";
+  const emojiList = emojiBySection[currentKey] || ["✨"];
+  const currentEmojiIdx = emojiCycle[currentKey] ?? 0;
+  const currentEmoji = emojiList[currentEmojiIdx % emojiList.length];
+
+  React.useEffect(() => {
+    const list = emojiBySection[currentKey] || ["✨"];
+    setEmojiCycle((prev) => ({
+      ...prev,
+      [currentKey]: ((prev[currentKey] ?? -1) + 1) % list.length,
+    }));
+  }, [currentKey]);
   const containerClass = dropped
-    ? "fixed left-1/2 bottom-6 z-30 -translate-x-1/2"
-    : "fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2";
+    ? "fixed left-[100px] bottom-6 z-30"
+    : "fixed left-[100px] top-1/2 z-30 -translate-y-1/2";
 
   // BIGGER BADGE + ICON
   return (
-    <div className={containerClass}>
+    <div className={containerClass} style={dropped ? undefined : { top: "calc(50% + 40px)" }}>
       <motion.button
         type="button"
         aria-label={dropped ? "Resume floating" : "Drop badge"}
         title={dropped ? "Click to resume floating" : "Click to drop here"}
         onClick={onToggle}
         className="pointer-events-auto focus:outline-none"
-        style={dropped ? undefined : { x }}
+        style={dropped ? undefined : { y }}
         animate={dropped ? { y: 0, rotate: 0, scale: 1 } : undefined}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         <motion.div
           style={dropped ? undefined : { rotate, scale }}
-          className="relative h-12 w-12 sm:h-12 sm:w-12 rounded-2xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/35 flex items-center justify-center backdrop-blur"
+          className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/35 flex items-center justify-center backdrop-blur"
           whileTap={{ scale: 0.96 }}
         >
-          <div className="select-none text-3xl sm:text-3xl font-black tracking-widest mix-blend-screen text-white">
-            {labels[currentKey]}
+          <div className="select-none text-5xl sm:text-6xl font-black tracking-widest mix-blend-screen text-white">
+            <span role="img" aria-label={currentKey}>{currentEmoji}</span>
           </div>
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
         </motion.div>
@@ -481,6 +531,7 @@ function handleNavClick(e: React.MouseEvent<HTMLElement>, targetId: string) {
 export default function LevaniPortfolio() {
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
   const [badgeDropped, setBadgeDropped] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -509,16 +560,25 @@ export default function LevaniPortfolio() {
     const name = (fd.get("name") as string) || "";
     const contact = (fd.get("contact") as string) || "";
     const message = (fd.get("message") as string) || "";
+    if (!contact && !message) { setToast("Please add your contact and a short project note."); window.setTimeout(() => setToast(null), 3000); return; }
     const subject = encodeURIComponent(`Portfolio inquiry from ${name || "Website"}`);
-    const body = encodeURIComponent(`Contact: ${contact}\n\n${message}`);
+    const body = encodeURIComponent(`Contact: ${contact}
+
+${message}`);
     window.location.href = `mailto:levaniesitashvili1999@gmail.com?subject=${subject}&body=${body}`;
+    setToast("Opening your email app with a draft...");
+    window.setTimeout(() => setToast(null), 3000);
   };
 
   return (
     <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-proximity bg-[#0B0B13]">
       <BackgroundMotion />
 
-      {/* ===== TOP BAR like your sketch: left Home pill + name, right nav ===== */}
+      {toast && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 rounded-xl px-4 py-2 text-sm shadow-lg ring-1 bg-emerald-600/90 ring-emerald-300/40">
+          {toast}
+        </div>
+      )}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60 bg-zinc-900/70 border-b border-zinc-800">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
           <div className="flex items-center gap-3">
@@ -538,16 +598,28 @@ export default function LevaniPortfolio() {
             </a>
           </div>
 
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm text-zinc-300">
-            <a href="#casino" onClick={(e) => handleNavClick(e, "casino")} className="hover:text-white">Casino</a>
-            <a href="#sports" onClick={(e) => handleNavClick(e, "sports")} className="hover:text-white">Sports</a>
-            <a href="#events" onClick={(e) => handleNavClick(e, "events")} className="hover:text-white">Events & Clubs</a>
-            <a href="#slots" onClick={(e) => handleNavClick(e, "slots")} className="hover:text-white">Slots</a>
-            <a href="#youtube" onClick={(e) => handleNavClick(e, "youtube")} className="hover:text-white">YouTube</a>
-            <a href="#fiverr" onClick={(e) => handleNavClick(e, "fiverr")} className="hover:text-white">Fiverr</a>
-            <a href="#fantasy" onClick={(e) => handleNavClick(e, "fantasy")} className="hover:text-white">Fantasy</a>
-            <a href="#experience" onClick={(e) => handleNavClick(e, "experience")} className="hover:text-white">Experience</a>
-            <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="hover:text-white">Contact</a>
+          <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-sm text-zinc-300">
+            {[
+              ["casino","Casino"],
+              ["sports","Sports"],
+              ["arqi","Arqi"],
+              ["events","Events & Clubs"],
+              ["slots","Slots"],
+              ["youtube","YouTube"],
+              ["fiverr","Fiverr"],
+              ["fantasy","Fantasy"],
+              ["experience","Experience"],
+              ["contact","Contact"],
+            ].map(([id,label]) => (
+              <a
+                key={id}
+                href={`#${id}`}
+                onClick={(e) => handleNavClick(e, id as string)}
+                className="px-2 py-1 rounded-lg text-zinc-300/90 hover:text-white hover:bg-white/5 ring-1 ring-transparent hover:ring-white/10 transition"
+              >
+                {label}
+              </a>
+            ))}
           </nav>
 
           <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="md:hidden inline-flex items-center gap-2 text-sm text-zinc-200">
@@ -573,7 +645,7 @@ export default function LevaniPortfolio() {
             >
               <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover" />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
-              <EdgeArrows />
+              <EdgeArrowsClean />
               <motion.div
                 className="absolute left-4 top-4 z-10"
                 animate={{ scale: [1, 1.1, 1], rotate: [0, -3, 3, 0] }}
@@ -610,7 +682,7 @@ export default function LevaniPortfolio() {
 
             {/* Chips row like in your sketch, under socials */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {["Senior Video Editor", "After Effects / Premiere Pro", "Casino • Sports • Slots", "Social Cutdowns"].map((chip) => (
+              {["Senior Video Editor", "After Effects / Premiere Pro", "Casino / Sports / Slots", "Social Cutdowns"].map((chip) => (
                 <Badge key={chip} className="rounded-full bg-zinc-900 text-zinc-200 ring-1 ring-zinc-800">
                   {chip}
                 </Badge>
@@ -624,17 +696,23 @@ export default function LevaniPortfolio() {
               Video Editor & After Effects Specialist
             </h1>
             <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">
-              I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for
+              I'm a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for
               casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <a href="#casino" onClick={(e) => handleNavClick(e, "casino")}>
-                <Button className="rounded-2xl">View Work</Button>
+                <Button className="rounded-2xl px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold bg-gradient-to-r from-[#9FA2FF] to-[#00FFC6] text-black/90 hover:from-[#B4B6FF] hover:to-[#2EFFD8] shadow-lg shadow-[#00FFC6]/20">
+                  View Work
+                </Button>
               </a>
               <a href="#contact" onClick={(e) => handleNavClick(e, "contact")}>
-                <Button variant="secondary" className="rounded-2xl">
+                <Button variant="secondary" className="rounded-2xl px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold bg-zinc-900 text-white ring-1 ring-zinc-700 hover:ring-zinc-500 shadow-lg/40">
                   Hire Me
                 </Button>
+              </a>
+              <a href="tel:+995595551405" className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 ring-1 ring-white/15 text-white/90 hover:bg-black/60 hover:ring-white/25 transition">
+                <span className="text-xs uppercase tracking-widest text-white/60">Call</span>
+                <span className="font-semibold">+995 595 55 14 05</span>
               </a>
             </div>
           </div>
@@ -657,9 +735,13 @@ export default function LevaniPortfolio() {
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900 px-4 py-3 text-sm ring-1 ring-zinc-800 hover:ring-zinc-600 transition"
           >
-            <span>See Sports Posters on Behance</span> <span>↗</span>
+            <span>See Sports Posters on Behance</span> <span>&rarr;</span>
           </a>
         </div>
+      </Section>
+
+      <Section id="arqi" title="Arqi" subtitle="Promos and edits for Arqi (vertical 9:16)." badge="New">
+        <PortfolioGrid items={arqiItems} onSelect={setSelected} />
       </Section>
 
       <Section id="events" title="Events & Clubs" subtitle="Recaps, aftermovies, and club promos (vertical 9:16)." badge="New">
@@ -706,37 +788,69 @@ export default function LevaniPortfolio() {
       <Section id="experience" title="Experience" subtitle="A quick look at my background and tools." badge="About">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
+            {/* Profile summary */}
+            <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+              <h3 className="font-semibold mb-2">Profile</h3>
+              <p className="text-zinc-300">
+                Creative, performance-driven Senior Video Editor & Motion Designer (8+ years) crafting cinematic promos and brand stories. Expert with Adobe Creative Suite and 3D tools (Blender, Cinema 4D). Currently leading visual projects at Blue Planet Creative Solutions.
+              </p>
+            </div>
+
+            {/* Roles */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
               <h3 className="font-semibold mb-2">Roles</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>Senior Motion/Video Editor — NovaTech Software Solutions</li>
-                <li>Freelance Video Editor — Fiverr & Upwork (ongoing)</li>
-                <li>Content Creator — YouTube (Vornato)</li>
+                <li>Blue Planet Creative Solutions — Video Editor / Team Leader (2021–Present)
+                  <span className="block text-zinc-400 text-sm">Led 200+ Amazon-compliant campaigns; streamlined post-production, improving turnaround by ~30%.</span>
+                </li>
+                <li>Freelancer (Fiverr, Upwork) — Senior Video Editor / Motion Designer (2017–2023)
+                  <span className="block text-zinc-400 text-sm">50+ international clients across eÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Ëœcommerce, gaming, and entertainment; consistent 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Ëœstar feedback.</span>
+                </li>
+                <li>Vornato YouTube — Content Creator & Editor (2015–2021)
+                  <span className="block text-zinc-400 text-sm">Grew to 28k+ subscribers and 1M+ total views through cinematic, storyÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Ëœdriven edits.</span>
+                </li>
               </ul>
             </div>
+
+            {/* Education */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
               <h3 className="font-semibold mb-2">Education</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>Business & Technology University — B.Sc. in Information Technology</li>
-                <li>Udemy — Videography Course (shooting fundamentals & editing workflows)</li>
+                <li>Business & Technology University — BSc in Information Technologies</li>
+                <li>Udemy — Videography Course Certificate</li>
               </ul>
             </div>
           </div>
+
           <div className="space-y-6">
+            {/* Skills */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
               <h3 className="font-semibold mb-2">Software & Skills</h3>
               <div className="flex flex-wrap gap-2">
-                {["After Effects", "Premiere Pro", "Photoshop", "Illustrator", "Blender", "Cinema 4D"].map((s) => (
+                {["After Effects", "Premiere Pro", "Photoshop", "Illustrator", "Blender", "Cinema 4D", "Color Grading", "Motion Design", "3D Visualization"].map((s) => (
                   <Badge key={s} className="rounded-full bg-zinc-800 text-zinc-200">
                     {s}
                   </Badge>
                 ))}
               </div>
             </div>
+
+            {/* Achievements */}
+            <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
+              <h3 className="font-semibold mb-2">Achievements</h3>
+              <ul className="space-y-2 text-zinc-300 list-disc pl-5">
+                <li>Edited and delivered 200+ promotional/cinematic brand videos.</li>
+                <li>Top Rated freelancer on Fiverr with consistent 5-star feedback.</li>
+                <li>Produced Amazon-certified ad content surpassing 1M total views.</li>
+                <li>Led multi-editor projects, improving workflow speed and consistency.</li>
+              </ul>
+            </div>
+
+            {/* Languages */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
               <h3 className="font-semibold mb-2">Languages</h3>
               <div className="flex flex-wrap gap-2">
-                {["Georgian", "English", "Russian"].map((l) => (
+                {["Georgian — Native", "English — Full Professional", "Russian — Professional Working"].map((l) => (
                   <Badge key={l} className="rounded-full bg-zinc-800 text-zinc-200">
                     {l}
                   </Badge>
@@ -747,12 +861,13 @@ export default function LevaniPortfolio() {
         </div>
       </Section>
 
-      <Section id="contact" title="Contact" subtitle="Let’s build something bold.">
+      <Section id="contact" title="Contact" subtitle="Lets build something bold.">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-            <a href="mailto:levaniesitashvili1999@gmail.com" className="flex items-center gap-3 text-zinc-200 hover:underline">
-              ✉️ levaniesitashvili1999@gmail.com
-            </a>
+            <div className="space-y-1">
+              <div className="text-xs uppercase tracking-widest text-zinc-400">Email</div>
+              <a href="mailto:levaniesitashvili1999@gmail.com" className="text-zinc-200 hover:underline">levaniesitashvili1999@gmail.com</a>
+            </div>
           </div>
 
           <a
@@ -786,9 +901,8 @@ export default function LevaniPortfolio() {
       </Section>
 
       <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">
-        © {new Date().getFullYear()} Levani Esitashvili — Portfolio
+        (c) {new Date().getFullYear()} Levani Esitashvili - Portfolio
       </footer>
-
       {selected && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <div className="relative w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
@@ -829,3 +943,10 @@ export default function LevaniPortfolio() {
     </main>
   );
 }
+
+
+
+
+
+
+

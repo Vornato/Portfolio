@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 export const Badge: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className = "", ...props }) => (
@@ -330,10 +330,25 @@ const EdgeArrows: React.FC = () => (
     ].map((pos, i) => (
       <div key={i} className="absolute text-white/80 drop-shadow" style={pos as any}>
         <div className="flex gap-1 text-xl">
-          <span>➤</span>
-          <span>➤</span>
-          <span>➤</span>
+          <span>âž¤</span>
+          <span>âž¤</span>
+          <span>âž¤</span>
         </div>
+      </div>
+    ))}
+  </motion.div>
+);
+
+const EdgeArrowsClean: React.FC = () => (
+  <motion.div className="pointer-events-none absolute inset-0" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 12, ease: "linear" }}>
+    {[
+      { top: "8%", left: "50%", transform: "translate(-50%, 0) rotate(0deg)" },
+      { top: "50%", left: "92%", transform: "translate(0, -50%) rotate(90deg)" },
+      { top: "92%", left: "50%", transform: "translate(-50%, -100%) rotate(180deg)" },
+      { top: "50%", left: "8%", transform: "translate(-100%, -50%) rotate(-90deg)" },
+    ].map((pos, i) => (
+      <div key={i} className="absolute text-white/80 drop-shadow" style={pos as any}>
+        <div className="flex gap-1 text-xl"><span>&gt;&gt;&gt;</span><span>&gt;&gt;&gt;</span><span>&gt;&gt;&gt;</span></div>
       </div>
     ))}
   </motion.div>
@@ -344,12 +359,12 @@ const FlyingBadge: React.FC<{
   dropped?: boolean;
   onToggle?: () => void;
 }> = ({ sectionOrder, dropped = false, onToggle }) => {
-  const leftX = "-44vw";
-  const rightX = "44vw";
+  const topY = "-44vh";
+  const bottomY = "44vh";
   const steps = Math.max(1, sectionOrder.length - 1);
 
   const input: number[] = [];
-  const xVals: (string | number)[] = [];
+  const yVals: (string | number)[] = [];
   const rotVals: number[] = [];
   const scaleVals: number[] = [];
 
@@ -362,11 +377,11 @@ const FlyingBadge: React.FC<{
     const tQ3 = tStart + 0.75 / steps;
     const tEnd = (i + 1) / steps;
 
-    const startEdge = goingLeftToRight ? leftX : rightX;
-    const q1 = goingLeftToRight ? "-22vw" : "22vw";
-    const center = "0vw";
-    const q3 = goingLeftToRight ? "22vw" : "-22vw";
-    const endEdge = goingLeftToRight ? rightX : leftX;
+    const startEdge = goingLeftToRight ? topY : bottomY;
+    const q1 = goingLeftToRight ? "-22vh" : "22vh";
+    const center = "0vh";
+    const q3 = goingLeftToRight ? "22vh" : "-22vh";
+    const endEdge = goingLeftToRight ? bottomY : topY;
 
     const r0 = 180 * i;
     const r45 = r0 + 45;
@@ -381,36 +396,36 @@ const FlyingBadge: React.FC<{
     const s4 = 0.92;
 
     input.push(tStart, tQ1, tMid, tQ3, tEnd);
-    xVals.push(startEdge, q1, center, q3, endEdge);
+    yVals.push(startEdge, q1, center, q3, endEdge);
     rotVals.push(r0, r45, r90, r135, r180);
     scaleVals.push(s0, s1, s2, s3, s4);
   }
 
   if (steps === 1 && input.length === 0) {
     input.push(0, 1);
-    xVals.push(leftX, rightX);
+    yVals.push(topY, bottomY);
     rotVals.push(0, 180);
     scaleVals.push(1, 1);
   }
 
   const { scrollYProgress } = useScroll();
-  const x = useTransform(scrollYProgress, input, xVals as any);
+  const y = useTransform(scrollYProgress, input, yVals as any);
   const rotate = useTransform(scrollYProgress, input, rotVals);
   const scale = useTransform(scrollYProgress, input, scaleVals);
 
-  const labels: Record<string, React.ReactNode> = {
-    hero: <span className="text-[#9999FF]">Ae</span>,
-    casino: <span>🎲</span>,
-    sports: <span>🏆</span>,
-    events: <span>🎉</span>,
-    slots: <span>✨</span>,
-    youtube: <span>▶️</span>,
-    fiverr: <span>💼</span>,
-    fantasy: <span>🎮</span>,
-    experience: <span>🎬</span>,
-    contact: <span>✉️</span>,
-  };
-
+  const emojiBySection: Record<string, string[]> = {
+  hero: ["AE", "🎬", "🎯", "🪄", "🌀"],
+  casino: ["🎰", "🎲", "🃏", "💰"],
+  sports: ["🏆", "⚽", "🏀", "🏈", "🥊"],
+  events: ["🎉", "🎤", "🎞️", "🎪"],
+  slots: ["🎰", "💎", "🍀", "7️⃣"],
+  youtube: ["▶️", "🎥", "📺", "🔔"],
+  fiverr: ["💼", "💚", "⚙️", "🤝"],
+  fantasy: ["🐉", "🧙‍♂️", "🗡️", "🏰", "🎯"],
+  experience: ["🧠", "🛠️", "📈", "🗂️"],
+  contact: ["✉️", "📨", "📞", "💬", "📮"],
+};
+  const [emojiCycle, setEmojiCycle] = React.useState<Record<string, number>>({});
   const [currentIdx, setCurrentIdx] = React.useState(0);
   useEffect(() => {
     const onScroll = () => {
@@ -424,30 +439,41 @@ const FlyingBadge: React.FC<{
   }, [sectionOrder.length]);
 
   const currentKey = sectionOrder[currentIdx] || "hero";
+  const emojiList = emojiBySection[currentKey] || ["✨"];
+  const currentEmojiIdx = emojiCycle[currentKey] ?? 0;
+  const currentEmoji = emojiList[currentEmojiIdx % emojiList.length];
+
+  React.useEffect(() => {
+    const list = emojiBySection[currentKey] || ["✨"];
+    setEmojiCycle((prev) => ({
+      ...prev,
+      [currentKey]: ((prev[currentKey] ?? -1) + 1) % list.length,
+    }));
+  }, [currentKey]);
   const containerClass = dropped
-    ? "fixed left-1/2 bottom-6 z-30 -translate-x-1/2"
-    : "fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2";
+    ? "fixed left-[100px] bottom-6 z-30"
+    : "fixed left-[100px] top-1/2 z-30 -translate-y-1/2";
 
   // BIGGER BADGE + ICON
   return (
-    <div className={containerClass}>
+    <div className={containerClass} style={dropped ? undefined : { top: "calc(50% + 40px)" }}>
       <motion.button
         type="button"
         aria-label={dropped ? "Resume floating" : "Drop badge"}
         title={dropped ? "Click to resume floating" : "Click to drop here"}
         onClick={onToggle}
         className="pointer-events-auto focus:outline-none"
-        style={dropped ? undefined : { x }}
+        style={dropped ? undefined : { y }}
         animate={dropped ? { y: 0, rotate: 0, scale: 1 } : undefined}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         <motion.div
           style={dropped ? undefined : { rotate, scale }}
-          className="relative h-30 w-30 sm:h-30 sm:w-30 rounded-2xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/35 flex items-center justify-center backdrop-blur"
+          className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-black/90 shadow-2xl ring-2 ring-[#9999FF]/35 flex items-center justify-center backdrop-blur"
           whileTap={{ scale: 0.96 }}
         >
-          <div className="select-none text-3xl sm:text-3xl font-black tracking-widest mix-blend-screen text-white">
-            {labels[currentKey]}
+          <div className="select-none text-5xl sm:text-6xl font-black tracking-widest mix-blend-screen text-white">
+            <span role="img" aria-label={currentKey}>{currentEmoji}</span>
           </div>
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
         </motion.div>
@@ -538,7 +564,7 @@ export default function LevaniPortfolio() {
             </a>
           </div>
 
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm text-zinc-300">
+          <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-sm text-zinc-300">
             <a href="#casino" onClick={(e) => handleNavClick(e, "casino")} className="hover:text-white">Casino</a>
             <a href="#sports" onClick={(e) => handleNavClick(e, "sports")} className="hover:text-white">Sports</a>
             <a href="#events" onClick={(e) => handleNavClick(e, "events")} className="hover:text-white">Events & Clubs</a>
@@ -573,7 +599,7 @@ export default function LevaniPortfolio() {
             >
               <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover" />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
-              <EdgeArrows />
+              <EdgeArrowsClean />
               <motion.div
                 className="absolute left-4 top-4 z-10"
                 animate={{ scale: [1, 1.1, 1], rotate: [0, -3, 3, 0] }}
@@ -610,7 +636,7 @@ export default function LevaniPortfolio() {
 
             {/* Chips row like in your sketch, under socials */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {["Senior Video Editor", "After Effects / Premiere Pro", "Casino • Sports • Slots", "Social Cutdowns"].map((chip) => (
+              {["Senior Video Editor", "After Effects / Premiere Pro", "Casino â€¢ Sports â€¢ Slots", "Social Cutdowns"].map((chip) => (
                 <Badge key={chip} className="rounded-full bg-zinc-900 text-zinc-200 ring-1 ring-zinc-800">
                   {chip}
                 </Badge>
@@ -624,15 +650,15 @@ export default function LevaniPortfolio() {
               Video Editor & After Effects Specialist
             </h1>
             <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">
-              I’m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for
+              Iâ€™m a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for
               casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a href="#casino" onClick={(e) => handleNavClick(e, "casino")}>
-                <Button className="rounded-2xl">View Work</Button>
+                <Button className="rounded-2xl px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold bg-gradient-to-r from-[#9FA2FF] to-[#00FFC6] text-black/90 hover:from-[#B4B6FF] hover:to-[#2EFFD8] shadow-lg shadow-[#00FFC6]/20">View Work</Button>
               </a>
               <a href="#contact" onClick={(e) => handleNavClick(e, "contact")}>
-                <Button variant="secondary" className="rounded-2xl">
+                <Button variant="secondary" className="rounded-2xl px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold bg-zinc-900 text-white ring-1 ring-zinc-700 hover:ring-zinc-500 shadow-lg/40">
                   Hire Me
                 </Button>
               </a>
@@ -657,7 +683,7 @@ export default function LevaniPortfolio() {
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900 px-4 py-3 text-sm ring-1 ring-zinc-800 hover:ring-zinc-600 transition"
           >
-            <span>See Sports Posters on Behance</span> <span>↗</span>
+            <span>See Sports Posters on Behance</span> <span>â†—</span>
           </a>
         </div>
       </Section>
@@ -709,16 +735,16 @@ export default function LevaniPortfolio() {
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
               <h3 className="font-semibold mb-2">Roles</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>Senior Motion/Video Editor — NovaTech Software Solutions</li>
-                <li>Freelance Video Editor — Fiverr & Upwork (ongoing)</li>
-                <li>Content Creator — YouTube (Vornato)</li>
+                <li>Senior Motion/Video Editor - Nova Tech Creative Solutions</li>
+                <li>Freelance Video Editor - Fiverr & Upwork (ongoing)</li>
+                <li>Content Creator - YouTube (Vornato)</li>
               </ul>
             </div>
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
               <h3 className="font-semibold mb-2">Education</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>Business & Technology University — B.Sc. in Information Technology</li>
-                <li>Udemy — Videography Course (shooting fundamentals & editing workflows)</li>
+                <li>Business & Technology University - B.Sc. in Information Technology</li>
+                <li>Udemy - Videography Course (shooting fundamentals & editing workflows)</li>
               </ul>
             </div>
           </div>
@@ -747,11 +773,11 @@ export default function LevaniPortfolio() {
         </div>
       </Section>
 
-      <Section id="contact" title="Contact" subtitle="Let’s build something bold.">
+      <Section id="contact" title="Contact" subtitle="Letâ€™s build something bold.">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
             <a href="mailto:levaniesitashvili1999@gmail.com" className="flex items-center gap-3 text-zinc-200 hover:underline">
-              ✉️ levaniesitashvili1999@gmail.com
+              âœ‰ï¸ levaniesitashvili1999@gmail.com
             </a>
           </div>
 
@@ -786,7 +812,7 @@ export default function LevaniPortfolio() {
       </Section>
 
       <footer className="border-t border-zinc-800/70 px-4 sm:px-6 lg:px-8 py-10 text-center text-zinc-500 text-sm">
-        © {new Date().getFullYear()} Levani Esitashvili — Portfolio
+        Â© {new Date().getFullYear()} Levani Esitashvili â€” Portfolio
       </footer>
 
       {selected && (
@@ -829,3 +855,10 @@ export default function LevaniPortfolio() {
     </main>
   );
 }
+
+
+
+
+
+
+
