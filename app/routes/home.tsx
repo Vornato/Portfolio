@@ -804,10 +804,10 @@ ${message}`);
                   <span className="block text-zinc-400 text-sm">Led 200+ Amazon-compliant campaigns; streamlined post-production, improving turnaround by ~30%.</span>
                 </li>
                 <li>Freelancer (Fiverr, Upwork) — Senior Video Editor / Motion Designer (2017–2023)
-                  <span className="block text-zinc-400 text-sm">50+ international clients across eÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Ëœcommerce, gaming, and entertainment; consistent 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Ëœstar feedback.</span>
+                  <span className="block text-zinc-400 text-sm">50+ international clients across e-commerce, gaming, and entertainment; consistent 5-star feedback.</span>
                 </li>
                 <li>Vornato YouTube — Content Creator & Editor (2015–2021)
-                  <span className="block text-zinc-400 text-sm">Grew to 28k+ subscribers and 1M+ total views through cinematic, storyÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Ëœdriven edits.</span>
+                  <span className="block text-zinc-400 text-sm">Grew to 28k+ subscribers and 1M+ total views through cinematic, story-driven edits.</span>
                 </li>
               </ul>
             </div>
@@ -943,6 +943,8 @@ ${message}`);
     </main>
   );
 }
+
+
 
 
 
