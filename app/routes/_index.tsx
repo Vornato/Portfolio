@@ -50,9 +50,11 @@ type PortfolioItem = {
 };
 
 const casinoItems: PortfolioItem[] = [
-  { title: "Casino Short 1", tag: "Casino", provider: "youtube", embedId: "upR7VahYFns", poster: "https://img.youtube.com/vi/upR7VahYFns/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Casino Short 2", tag: "Casino", provider: "youtube", embedId: "gcNzXB7Suz4", poster: "https://img.youtube.com/vi/gcNzXB7Suz4/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Casino Short (Shorts)", tag: "Casino", provider: "youtube", embedId: "OUtLS5hc-mw", poster: "https://img.youtube.com/vi/OUtLS5hc-mw/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Casino Short (Shorts)", tag: "Casino", provider: "youtube", embedId: "KoYBF8pH-1o", poster: "https://img.youtube.com/vi/KoYBF8pH-1o/maxresdefault.jpg", orientation: "vertical" },
   { title: "Casino Short 3", tag: "Casino", provider: "youtube", embedId: "5x4v_d2RvFc", poster: "https://img.youtube.com/vi/5x4v_d2RvFc/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Casino Short 2", tag: "Casino", provider: "youtube", embedId: "gcNzXB7Suz4", poster: "https://img.youtube.com/vi/gcNzXB7Suz4/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Casino Short 1", tag: "Casino", provider: "youtube", embedId: "upR7VahYFns", poster: "https://img.youtube.com/vi/upR7VahYFns/maxresdefault.jpg", orientation: "vertical" },
   { title: "Casino Promo", tag: "Casino", provider: "youtube", embedId: "12I1ZI218g0", poster: "https://img.youtube.com/vi/12I1ZI218g0/maxresdefault.jpg", orientation: "horizontal" },
 ];
 
