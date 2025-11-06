@@ -4,8 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  // required for GitHub Pages project sites
-  base: "/Portfolio/",
+  // Custom domain deploy (GitHub Pages) should use root base
+  base: "/",
   plugins: [react(), tailwindcss(), tsconfigPaths()],
   build: { outDir: "dist" }
 });
