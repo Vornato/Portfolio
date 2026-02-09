@@ -119,7 +119,7 @@ const ui = {
           detail: "Designing and animating motion assets for current brand and product campaigns.",
         },
         {
-          title: "Nova Tech Creative Solutions — Video Editor / Team Leader (2021–Present)",
+          title: "Nova Tech Creative Solutions — Video Editor / Team Leader (2021–2026)",
           detail: "Led 200+ Amazon-compliant campaigns; streamlined post-production, improving turnaround by ~30%.",
         },
         {
@@ -224,7 +224,7 @@ const ui = {
           detail: "ვქმნი და ვანიმირებ motion მასალებს მიმდინარე ბრენდული და პროდუქტის კამპანიებისთვის.",
         },
         {
-          title: "Nova Tech Creative Solutions — Video Editor / Team Leader (2021–დღემდე)",
+          title: "Nova Tech Creative Solutions — Video Editor / Team Leader (2021–2026)",
           detail: "ვუხელმძღვანელე 200+ Amazon-compliant კამპანიას და პოსტპროდაქშენის პროცესის ოპტიმიზაციით დრო დაახლოებით 30%-ით შევამცირე.",
         },
         {
