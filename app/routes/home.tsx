@@ -1,8 +1,15 @@
 ﻿import React, { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { A11y, Autoplay, EffectCoverflow, Pagination } from "swiper/modules";
+import type { Swiper as SwiperInstance } from "swiper";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 export const Badge: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className = "", ...props }) => (
-  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-100 ${className}`} {...props} />
+  <span className={`ui-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-100 ${className}`} {...props} />
 );
 export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "secondary" }> = ({
   variant = "default",
@@ -10,7 +17,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
   ...props
 }) => {
   const base =
-    "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-xl transition focus:outline-none focus:ring-2 focus:ring-offset-0";
+    "ui-button inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-xl transition focus:outline-none focus:ring-2 focus:ring-offset-0";
   const styles =
     variant === "secondary"
       ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700 focus:ring-zinc-600"
@@ -39,6 +46,222 @@ const socials = [
   { name: "Fiverr", href: "https://www.fiverr.com/s/xXoPYLZ", icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/fiverr.svg" },
 ];
 
+type Language = "en" | "ka";
+const LANG_STORAGE_KEY = "portfolio_lang";
+
+const ui = {
+  en: {
+    home: "Home",
+    backToTop: "Back to top",
+    nav: {
+      casino: "Casino",
+      sports: "Sports",
+      arqi: "Archi",
+      events: "Events & Clubs",
+      slots: "Slots",
+      youtube: "YouTube",
+      fiverr: "Fiverr",
+      fantasy: "Fantasy",
+      experience: "Experience",
+      contact: "Contact",
+    },
+    labels: {
+      openIntroVideo: "Open intro video",
+      clickIt: "Click it",
+      viewWork: "View Work",
+      hireMe: "Hire Me",
+      call: "Call",
+      seeSportsPosters: "See Sports Posters on Behance",
+      fiverrCard: "Unboxing video samples (Fiverr)",
+      youtubeCoverAlt: "YouTube channel cover",
+      send: "Send",
+      close: "Close",
+      openProject: "Open project",
+      email: "Email",
+      youtubeChannel: "YouTube Channel",
+      carouselPlay: "Click to play",
+      carouselOpenPrefix: "Open",
+    },
+    toasts: {
+      needContact: "Please include your contact and a short note.",
+      sent: "Thanks! Message sent successfully.",
+      couldNotSend: "Could not send via form. Opening email draft...",
+      openingMail: "Opening your email app with a draft...",
+      copied: "Copied message to clipboard. Paste into your email app.",
+      openedGmail: "Opened Gmail compose in a new tab.",
+    },
+    hero: {
+      chips: ["Senior Video Editor", "After Effects / Premiere Pro", "Casino / Sports / Slots", "Social Cutdowns"],
+      title: "Video Editor & After Effects Specialist",
+      subtitle:
+        "I'm a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.",
+    },
+    sections: {
+      casino: { title: "Casino", subtitle: "Trailers, promos, bumpers and motion graphics for casino brands.", badge: "Portfolio" },
+      sports: { title: "Sports", subtitle: "Odds reels, hype edits, and event highlights.", badge: "" },
+      arqi: { title: "Archi", subtitle: "Promos and edits for Archi (vertical 9:16).", badge: "New" },
+      events: { title: "Events & Clubs", subtitle: "Recaps, aftermovies, and club promos (vertical 9:16).", badge: "New" },
+      slots: { title: "Slots", subtitle: "Feature teases and character-driven cutdowns for popular slot IPs.", badge: "" },
+      youtube: { title: "YouTube", subtitle: "Latest edits and uploads from the VorNato channel.", badge: "Channel" },
+      fiverr: { title: "Fiverr Work", subtitle: "Hand-picked client pieces and repeat-order edits.", badge: "" },
+      fantasy: { title: "Fantasy Games", subtitle: "Stylized teasers and promo assets for fantasy titles.", badge: "" },
+      experience: { title: "Experience", subtitle: "A quick look at my background and tools.", badge: "About" },
+      contact: { title: "Contact", subtitle: "Lets build something bold.", badge: "" },
+    },
+    experience: {
+      profileTitle: "Profile",
+      profileText:
+        "Creative, performance-driven Senior Video Editor & Motion Designer (8+ years) crafting cinematic promos and brand stories. Expert with Adobe Creative Suite and 3D tools (Blender, Cinema 4D). Currently leading visual projects at Nova Tech Creative Solutions.",
+      rolesTitle: "Roles",
+      roles: [
+        {
+          title: "Archi Development — Motion Designer (Current)",
+          detail: "Designing and animating motion assets for current brand and product campaigns.",
+        },
+        {
+          title: "Nova Tech Creative Solutions — Video Editor / Team Leader (2021–Present)",
+          detail: "Led 200+ Amazon-compliant campaigns; streamlined post-production, improving turnaround by ~30%.",
+        },
+        {
+          title: "Freelancer (Fiverr, Upwork) — Senior Video Editor / Motion Designer (2017–2023)",
+          detail: "50+ international clients across e-commerce, gaming, and entertainment; consistent 5-star feedback.",
+        },
+        {
+          title: "Vornato YouTube — Content Creator & Editor (2015–2021)",
+          detail: "Grew to 28k+ subscribers and 1M+ total views through cinematic, story-driven edits.",
+        },
+      ],
+      educationTitle: "Education",
+      education: ["Business & Technology University — BSc in Information Technologies", "Udemy — Videography Course Certificate"],
+      skillsTitle: "Software & Skills",
+      skills: ["After Effects", "Premiere Pro", "Photoshop", "Illustrator", "Blender", "Cinema 4D", "Color Grading", "Motion Design", "3D Visualization"],
+      achievementsTitle: "Achievements",
+      achievements: [
+        "Edited and delivered 200+ promotional/cinematic brand videos.",
+        "Top Rated freelancer on Fiverr with consistent 5-star feedback.",
+        "Produced Amazon-certified ad content surpassing 1M total views.",
+        "Led multi-editor projects, improving workflow speed and consistency.",
+      ],
+      languagesTitle: "Languages",
+      languages: ["Georgian — Native", "English — Full Professional", "Russian — Professional Working"],
+    },
+    contact: {
+      nameLabel: "Name",
+      contactLabel: "Email or Telegram",
+      messageLabel: "Project details",
+      namePlaceholder: "Your name",
+      contactPlaceholder: "Email or Telegram",
+      messagePlaceholder: "Project details",
+      note: "Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.",
+    },
+  },
+  ka: {
+    home: "მთავარი",
+    backToTop: "ზემოთ დაბრუნება",
+    nav: {
+      casino: "კაზინო",
+      sports: "სპორტი",
+      arqi: "არქი",
+      events: "ივენთები და კლუბები",
+      slots: "სლოტები",
+      youtube: "იუთუბი",
+      fiverr: "ფაივერი",
+      fantasy: "ფენტეზი",
+      experience: "გამოცდილება",
+      contact: "კონტაქტი",
+    },
+    labels: {
+      openIntroVideo: "ინტრო ვიდეოს გახსნა",
+      clickIt: "დააჭირე",
+      viewWork: "ნამუშევრების ნახვა",
+      hireMe: "დამიქირავეთ",
+      call: "დარეკვა",
+      seeSportsPosters: "სპორტული პოსტერები Behance-ზე",
+      fiverrCard: "Unboxing ვიდეოს ნიმუშები (Fiverr)",
+      youtubeCoverAlt: "YouTube არხის ქავერი",
+      send: "გაგზავნა",
+      close: "დახურვა",
+      openProject: "პროექტის გახსნა",
+      email: "ელფოსტა",
+      youtubeChannel: "YouTube არხი",
+      carouselPlay: "დასაკრავად დააჭირეთ",
+      carouselOpenPrefix: "გახსენი",
+    },
+    toasts: {
+      needContact: "გთხოვთ მიუთითოთ კონტაქტი და მოკლე აღწერა.",
+      sent: "გმადლობთ! შეტყობინება წარმატებით გაიგზავნა.",
+      couldNotSend: "ფორმით გაგზავნა ვერ მოხერხდა. ვხსნი ელფოსტის დრაფტს...",
+      openingMail: "ვხსნი თქვენს ელფოსტას დრაფტით...",
+      copied: "ტექსტი დაკოპირდა. ჩასვით თქვენს ელფოსტაში.",
+      openedGmail: "Gmail compose გაიხსნა ახალ ფანჯარაში.",
+    },
+    hero: {
+      chips: ["სენიორ ვიდეო რედაქტორი", "After Effects / Premiere Pro", "კაზინო / სპორტი / სლოტები", "სოციალური cutdown-ები"],
+      title: "ვიდეო რედაქტორი და After Effects სპეციალისტი",
+      subtitle:
+        "მე ვარ თბილისიდან სენიორ ვიდეო რედაქტორი, ვისაც უყვარს ტექნოლოგია და ინოვაციური პროდუქტები. ვქმნი პლატფორმისთვის მორგებულ პრომოებს კაზინოს, სპორტის, სლოტებისა და ფენტეზის მიმართულებებით. ვიდეოს გადაღება და საბოლოო ფორმამდე მიყვანა ჩემი საქმეა.",
+    },
+    sections: {
+      casino: { title: "კაზინო", subtitle: "კაზინო ბრენდებისთვის ტრეილერები, პრომოები, ბამპერები და motion გრაფიკა.", badge: "პორტფოლიო" },
+      sports: { title: "სპორტი", subtitle: "კოეფიციენტების რილები, hype-მონტაჟები და ღონისძიებების ჰაილაითები.", badge: "" },
+      arqi: { title: "არქი", subtitle: "არქისთვის პრომოები და მონტაჟები (ვერტიკალური 9:16).", badge: "ახალი" },
+      events: { title: "ივენთები და კლუბები", subtitle: "რექეფები, aftermovie-ები და კლუბური პრომოები (ვერტიკალური 9:16).", badge: "ახალი" },
+      slots: { title: "სლოტები", subtitle: "პოპულარული სლოტ IP-ებისთვის ფუნქციების თიზერები და პერსონაჟზე დაფუძნებული cutdown-ები.", badge: "" },
+      youtube: { title: "იუთუბი", subtitle: "VorNato არხის უახლესი ვიდეოები და მონტაჟები.", badge: "არხი" },
+      fiverr: { title: "Fiverr ნამუშევრები", subtitle: "კლიენტებისთვის შექმნილი გამორჩეული ვიდეოები და განმეორებითი შეკვეთები.", badge: "" },
+      fantasy: { title: "ფენტეზი თამაშები", subtitle: "სტილიზებული თიზერები და პრომო მასალა ფენტეზი პროექტებისთვის.", badge: "" },
+      experience: { title: "გამოცდილება", subtitle: "ჩემი გამოცდილებისა და ინსტრუმენტების მოკლე მიმოხილვა.", badge: "შესახებ" },
+      contact: { title: "კონტაქტი", subtitle: "მოდი, ერთად შევქმნათ რაღაც გამორჩეული.", badge: "" },
+    },
+    experience: {
+      profileTitle: "პროფილი",
+      profileText:
+        "შედეგზე ორიენტირებული Senior Video Editor & Motion Designer (8+ წელი). ვქმნი კინემატოგრაფიულ პრომოებსა და ბრენდულ ისტორიებს. ვმუშაობ Adobe Creative Suite-ით და 3D ინსტრუმენტებით (Blender, Cinema 4D). ამჟამად ვხელმძღვანელობ ვიზუალურ პროექტებს Nova Tech Creative Solutions-ში.",
+      rolesTitle: "როლები",
+      roles: [
+        {
+          title: "Archi Development — Motion Designer (ამჟამად)",
+          detail: "ვქმნი და ვანიმირებ motion მასალებს მიმდინარე ბრენდული და პროდუქტის კამპანიებისთვის.",
+        },
+        {
+          title: "Nova Tech Creative Solutions — Video Editor / Team Leader (2021–დღემდე)",
+          detail: "ვუხელმძღვანელე 200+ Amazon-compliant კამპანიას და პოსტპროდაქშენის პროცესის ოპტიმიზაციით დრო დაახლოებით 30%-ით შევამცირე.",
+        },
+        {
+          title: "Freelancer (Fiverr, Upwork) — Senior Video Editor / Motion Designer (2017–2023)",
+          detail: "50+ საერთაშორისო კლიენტი e-commerce, gaming და entertainment მიმართულებებით; სტაბილური 5-ვარსკვლავიანი შეფასებები.",
+        },
+        {
+          title: "Vornato YouTube — Content Creator & Editor (2015–2021)",
+          detail: "არხი გავზარდე 28k+ გამომწერამდე და 1M+ ნახვამდე კინემატოგრაფიული, სთორიზე დაფუძნებული მონტაჟებით.",
+        },
+      ],
+      educationTitle: "განათლება",
+      education: ["Business & Technology University — BSc ინფორმაციულ ტექნოლოგიებში", "Udemy — Videography Course Certificate"],
+      skillsTitle: "პროგრამები და უნარები",
+      skills: ["After Effects", "Premiere Pro", "Photoshop", "Illustrator", "Blender", "Cinema 4D", "Color Grading", "Motion Design", "3D Visualization"],
+      achievementsTitle: "მიღწევები",
+      achievements: [
+        "200+ პრომო/კინემატოგრაფიული ბრენდული ვიდეოს მონტაჟი და მიწოდება.",
+        "Top Rated სტატუსი Fiverr-ზე და სტაბილური 5-ვარსკვლავიანი შეფასებები.",
+        "Amazon-certified სარეკლამო კონტენტი 1M+ საერთო ნახვით.",
+        "მრავალრედაქტორული პროექტების მართვა და სამუშაო პროცესის დაჩქარება.",
+      ],
+      languagesTitle: "ენები",
+      languages: ["ქართული — მშობლიური", "ინგლისური — პროფესიული", "რუსული — სამუშაო დონე"],
+    },
+    contact: {
+      nameLabel: "სახელი",
+      contactLabel: "ელფოსტა ან Telegram",
+      messageLabel: "პროექტის დეტალები",
+      namePlaceholder: "თქვენი სახელი",
+      contactPlaceholder: "ელფოსტა ან Telegram",
+      messagePlaceholder: "პროექტის დეტალები",
+      note: "გაგზავნისას გაიხსნება თქვენი ელფოსტა წინასწარ შევსებული ინფორმაციით. სწრაფი კომუნიკაციისთვის მომწერეთ YouTube-ზე ან ელფოსტაზე.",
+    },
+  },
+} as const;
+
 type PortfolioItem = {
   title: string;
   tag?: string;
@@ -50,14 +273,14 @@ type PortfolioItem = {
   orientation?: "vertical" | "horizontal";
 };
 
-// New: Arqi items (YouTube Shorts)
+// New: Archi items (YouTube Shorts)
 const arqiItems: PortfolioItem[] = [
-  { title: "Arqi Short 1", tag: "Arqi", provider: "youtube", embedId: "ezDfjyzhPRM", poster: "https://img.youtube.com/vi/ezDfjyzhPRM/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Arqi Short 2", tag: "Arqi", provider: "youtube", embedId: "Leif5tfR-vA", poster: "https://img.youtube.com/vi/Leif5tfR-vA/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Arqi Short 3", tag: "Arqi", provider: "youtube", embedId: "DAG_iJAvdtE", poster: "https://img.youtube.com/vi/DAG_iJAvdtE/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Arqi Short 4", tag: "Arqi", provider: "youtube", embedId: "ashI2x3fJcI", poster: "https://img.youtube.com/vi/ashI2x3fJcI/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Arqi Short 5", tag: "Arqi", provider: "youtube", embedId: "8PAjRGUR_nk", poster: "https://img.youtube.com/vi/8PAjRGUR_nk/maxresdefault.jpg", orientation: "vertical" },
-  { title: "Arqi Short 6", tag: "Arqi", provider: "youtube", embedId: "X2THCukSVrE", poster: "https://img.youtube.com/vi/X2THCukSVrE/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 1", tag: "Archi", provider: "youtube", embedId: "ezDfjyzhPRM", poster: "https://img.youtube.com/vi/ezDfjyzhPRM/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 2", tag: "Archi", provider: "youtube", embedId: "Leif5tfR-vA", poster: "https://img.youtube.com/vi/Leif5tfR-vA/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 3", tag: "Archi", provider: "youtube", embedId: "DAG_iJAvdtE", poster: "https://img.youtube.com/vi/DAG_iJAvdtE/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 4", tag: "Archi", provider: "youtube", embedId: "ashI2x3fJcI", poster: "https://img.youtube.com/vi/ashI2x3fJcI/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 5", tag: "Archi", provider: "youtube", embedId: "8PAjRGUR_nk", poster: "https://img.youtube.com/vi/8PAjRGUR_nk/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 6", tag: "Archi", provider: "youtube", embedId: "X2THCukSVrE", poster: "https://img.youtube.com/vi/X2THCukSVrE/maxresdefault.jpg", orientation: "vertical" },
 ];
 
 const casinoItems: PortfolioItem[] = [
@@ -113,28 +336,39 @@ const fantasyItems: PortfolioItem[] = [
   { title: "Fantasy Short 3", tag: "Fantasy", provider: "youtube", embedId: "wqPAeIhHqgg", poster: "https://img.youtube.com/vi/wqPAeIhHqgg/maxresdefault.jpg", orientation: "vertical" },
 ];
 
+const normalizeCarouselItems = (items: PortfolioItem[], minCount = 6): PortfolioItem[] => {
+  if (items.length >= minCount || items.length === 0) return items;
+  const repeats = Math.ceil(minCount / items.length);
+  return Array.from({ length: repeats * items.length }, (_, idx) => items[idx % items.length]);
+};
+
+const eventsCarouselItems = normalizeCarouselItems(eventsItems);
+const youtubeCarouselItems = normalizeCarouselItems(youtubeItems);
+const fantasyCarouselItems = normalizeCarouselItems(fantasyItems);
+
 const sectionOrder = ["hero", "casino", "sports", "arqi", "events", "slots", "youtube", "fiverr", "fantasy", "experience", "contact"] as const;
 
-const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; children: React.ReactNode }> = ({
+const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; backToTopLabel?: string; children: React.ReactNode }> = ({
   id,
   title,
   subtitle,
   badge,
+  backToTopLabel = "Back to top",
   children,
 }) => (
   <section
     id={id}
-    className="relative snap-start min-h-[88vh] md:min-h-[92vh] lg:min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 scroll-mt-20"
+    className="relative snap-start mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12 scroll-mt-20"
   >
     <div className="w-full">
-      <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div className="mb-4 sm:mb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-3">
         <div>
           {badge && <Badge className="mb-3 rounded-2xl px-3 py-1 text-xs">{badge}</Badge>}
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
-          {subtitle && <p className="mt-2 text-zinc-300 max-w-2xl leading-relaxed">{subtitle}</p>}
+          <h2 className="section-title text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
+          {subtitle && <p className="section-subtitle mt-2 text-zinc-300 max-w-2xl leading-relaxed">{subtitle}</p>}
         </div>
         <a href="#top" onClick={(e) => handleNavClick(e, "top")} className="md:inline-flex items-center text-zinc-400 hover:text-white text-sm">
-          Back to top
+          {backToTopLabel}
         </a>
       </div>
       {children}
@@ -142,36 +376,168 @@ const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: 
   </section>
 );
 
-const Poster: React.FC<{ item: PortfolioItem }> = ({ item }) => (
-  <img
-    src={item.poster}
-    alt={item.title}
-    className={`w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100 ${
-      item.orientation === "vertical" ? "aspect-[9/16]" : "aspect-video"
-    } rounded-2xl`}
-  />
-);
+const Poster: React.FC<{ item: PortfolioItem; className?: string }> = ({ item, className = "" }) => {
+  const src = item.poster || posterPlaceholder({ label: item.title, orientation: item.orientation });
+  return (
+    <img
+      src={src}
+      alt={item.title}
+      className={`h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100 ${className}`}
+    />
+  );
+};
 
-const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: PortfolioItem) => void }> = ({ items, onSelect }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-    {items.map((it, i) => (
-      <button
-        key={i}
-        onClick={() => (onSelect ? onSelect(it) : window.open(it.href || "#", "_blank"))}
-        className="group relative overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-zinc-800 hover:ring-zinc-600 transition text-left"
+const CAROUSEL_AUTOPLAY_MS = 2600;
+const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: PortfolioItem) => void; playHint?: string; openLabel?: string }> = ({
+  items,
+  onSelect,
+  playHint = "Click to play",
+  openLabel = "Open",
+}) => {
+  const itemCount = items.length;
+  if (!itemCount) return null;
+  const canSlide = itemCount > 1;
+
+  const uid = React.useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const sliderClassBase = `category-swiper-${uid}`;
+  const paginationClass = `${sliderClassBase}-pagination`;
+  const prevClass = `${sliderClassBase}-prev`;
+  const nextClass = `${sliderClassBase}-next`;
+  const swiperRef = React.useRef<SwiperInstance | null>(null);
+
+  const openItem = (item: PortfolioItem) => {
+    if (onSelect) {
+      onSelect(item);
+      return;
+    }
+    if (item.href) {
+      window.open(item.href, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleSwiperReady = (swiper: SwiperInstance) => {
+    swiperRef.current = swiper;
+    if (swiper.autoplay) {
+      swiper.autoplay.start();
+    }
+  };
+
+  const handleSwiperClick = (swiper: SwiperInstance, event?: MouseEvent | PointerEvent | TouchEvent) => {
+    const target = event?.target as HTMLElement | null;
+    if (target?.closest(".swiper-button-prev, .swiper-button-next, .swiper-pagination, .swiper-pagination-bullet")) {
+      return;
+    }
+
+    if (!swiper.clickedSlide) return;
+    const clickedEl = swiper.clickedSlide as HTMLElement;
+    const sliderEl = swiper.el as HTMLElement;
+    const clickedRect = clickedEl.getBoundingClientRect();
+    const sliderRect = sliderEl.getBoundingClientRect();
+    const clickedCenterX = clickedRect.left + clickedRect.width / 2;
+    const sliderCenterX = sliderRect.left + sliderRect.width / 2;
+    const isLeftSide = clickedCenterX < sliderCenterX - 2;
+    const isRightSide = clickedCenterX > sliderCenterX + 2;
+
+    if (canSlide && isLeftSide) {
+      swiper.slidePrev();
+      return;
+    }
+    if (canSlide && isRightSide) {
+      swiper.slideNext();
+      return;
+    }
+
+    const safeIndex = ((swiper.realIndex % itemCount) + itemCount) % itemCount;
+    const item = items[safeIndex];
+    if (item) {
+      openItem(item);
+    }
+  };
+
+  const handlePrevButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!canSlide) return;
+    swiperRef.current?.slidePrev();
+  };
+
+  const handleNextButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!canSlide) return;
+    swiperRef.current?.slideNext();
+  };
+
+  return (
+    <div className="category-slider-shell mx-auto w-full max-w-[1240px]" role="region" aria-roledescription="carousel" aria-label="Video carousel">
+      <Swiper
+        modules={[EffectCoverflow, Autoplay, Pagination, A11y]}
+        className="category-slider"
+        loop={canSlide}
+        grabCursor={canSlide}
+        centeredSlides
+        slidesPerView={"auto"}
+        speed={900}
+        watchOverflow
+        effect="coverflow"
+        coverflowEffect={{
+          rotate: 28,
+          stretch: 0,
+          depth: 220,
+          modifier: 1.1,
+          slideShadows: true,
+        }}
+        autoplay={
+          canSlide
+            ? {
+                delay: CAROUSEL_AUTOPLAY_MS,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }
+            : false
+        }
+        a11y={{ enabled: true, scrollOnFocus: false }}
+        pagination={canSlide ? { el: `.${paginationClass}`, clickable: true } : false}
+        onSwiper={handleSwiperReady}
+        onClick={handleSwiperClick}
       >
-        <Poster item={it} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 p-4">
-          <div className="flex items-center gap-2 text-zinc-200">
-            {it.tag && <Badge className="rounded-full bg-zinc-800/80">{it.tag}</Badge>}
-            <span className="font-semibold">{it.title}</span>
-          </div>
-        </div>
-      </button>
-    ))}
-  </div>
-);
+        {items.map((item, idx) => (
+          <SwiperSlide key={`${item.embedId || item.href || item.title}-${idx}`} className={item.orientation === "vertical" ? "is-vertical" : "is-horizontal"}>
+            <button type="button" className="category-slide-inner group" aria-label={`${openLabel} ${item.title}`}>
+              <div className="category-slide-media">
+                <Poster item={item} className={item.orientation === "vertical" ? "object-contain bg-black/70" : ""} />
+              </div>
+              <div className="category-slide-caption">
+                {item.tag && <span className="category-slide-chip">{item.tag}</span>}
+                <h3>{item.title}</h3>
+                <p>{playHint}</p>
+              </div>
+              <span className="category-slide-play" aria-hidden="true" />
+            </button>
+          </SwiperSlide>
+        ))}
+
+        {canSlide && (
+          <>
+            <button
+              type="button"
+              className={`swiper-button-prev ${prevClass}`}
+              aria-label="Previous video"
+              onClick={handlePrevButtonClick}
+            />
+            <button
+              type="button"
+              className={`swiper-button-next ${nextClass}`}
+              aria-label="Next video"
+              onClick={handleNextButtonClick}
+            />
+            <div className={`swiper-pagination ${paginationClass}`} />
+          </>
+        )}
+      </Swiper>
+    </div>
+  );
+};
 
 const BASE_GEAR_DURATIONS = [36, 28, 22];
 
@@ -530,10 +896,29 @@ function handleNavClick(e: React.MouseEvent<HTMLElement>, targetId: string) {
 }
 
 export default function LevaniPortfolio() {
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === "undefined") return "en";
+    const saved = window.localStorage.getItem(LANG_STORAGE_KEY);
+    return saved === "ka" ? "ka" : "en";
+  });
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
   const [badgeDropped, setBadgeDropped] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [toastKind, setToastKind] = useState<"success" | "error" | "info">("info");
+  const t = ui[language];
+  const navItems: Array<{ id: (typeof sectionOrder)[number]; label: string }> = [
+    { id: "casino", label: t.nav.casino },
+    { id: "sports", label: t.nav.sports },
+    { id: "arqi", label: t.nav.arqi },
+    { id: "events", label: t.nav.events },
+    { id: "slots", label: t.nav.slots },
+    { id: "youtube", label: t.nav.youtube },
+    { id: "fiverr", label: t.nav.fiverr },
+    { id: "fantasy", label: t.nav.fantasy },
+    { id: "experience", label: t.nav.experience },
+    { id: "contact", label: t.nav.contact },
+  ];
+  const gridLabels = { playHint: t.labels.carouselPlay, openLabel: t.labels.carouselOpenPrefix };
 
   useEffect(() => {
     const html = document.documentElement;
@@ -545,9 +930,15 @@ export default function LevaniPortfolio() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(LANG_STORAGE_KEY, language);
+    document.documentElement.lang = language;
+  }, [language]);
+
+  useEffect(() => {
     console.assert(typeof (motion as any) !== "undefined", "framer-motion 'motion' should be defined");
     const expected = sectionOrder.length;
-    console.assert(expected === 10, `Expected 10 waypoints, found ${expected}`);
+    console.assert(expected === 11, `Expected 11 waypoints, found ${expected}`);
     console.assert(Array.isArray(casinoItems) && casinoItems.length > 0, "casinoItems should be defined with items");
     console.assert(Array.isArray(sportsItems) && sportsItems.length > 0, "sportsItems should be defined with items");
     console.assert(Array.isArray(eventsItems) && eventsItems.length > 0, "eventsItems should be defined with items");
@@ -563,7 +954,7 @@ export default function LevaniPortfolio() {
     const contact = (fd.get("contact") as string) || "";
     const message = (fd.get("message") as string) || "";
     if (!contact && !message) {
-      setToast("Please include your contact and a short note.");
+      setToast(t.toasts.needContact);
       setToastKind("error");
       window.setTimeout(() => setToast(null), 3000);
       return;
@@ -577,7 +968,7 @@ export default function LevaniPortfolio() {
           body: JSON.stringify({ source: "portfolio", page: window.location.href, name, contact, message }),
         });
         if (res.ok) {
-          setToast("Thanks! Message sent successfully.");
+          setToast(t.toasts.sent);
           setToastKind("success");
           (e.currentTarget as HTMLFormElement).reset();
           window.setTimeout(() => setToast(null), 3000);
@@ -585,13 +976,15 @@ export default function LevaniPortfolio() {
         }
       } catch {}
     }
-    const subject = encodeURIComponent(`Portfolio inquiry from ${name || "Website"}`);
-    const body = encodeURIComponent(`Contact: ${contact}\n\n${message}`);
+    const subject = encodeURIComponent(
+      language === "ka" ? `პორტფოლიოს მოთხოვნა: ${name || "ვებსაიტი"}` : `Portfolio inquiry from ${name || "Website"}`
+    );
+    const body = encodeURIComponent(`${t.labels.email}: ${contact}\n\n${message}`);
     if (endpoint) {
-      setToast("Could not send via form. Opening email draft...");
+      setToast(t.toasts.couldNotSend);
       setToastKind("error");
     } else {
-      setToast("Opening your email app with a draft...");
+      setToast(t.toasts.openingMail);
       setToastKind("info");
     }
 
@@ -613,11 +1006,11 @@ export default function LevaniPortfolio() {
           if (!w) {
             try {
               await navigator.clipboard.writeText(`To: ${to}\nSubject: ${decodeURIComponent(subject)}\n\n${decodeURIComponent(body)}`);
-              setToast("Copied message to clipboard. Paste into your email app.");
+              setToast(t.toasts.copied);
               setToastKind("error");
             } catch {}
           } else {
-            setToast("Opened Gmail compose in a new tab.");
+            setToast(t.toasts.openedGmail);
             setToastKind("info");
           }
           setTimeout(() => setToast(null), 3500);
@@ -647,7 +1040,7 @@ export default function LevaniPortfolio() {
               onClick={(e) => handleNavClick(e, "top")}
               className="rounded-lg bg-zinc-800/80 hover:bg-zinc-700 px-3 py-1 text-sm text-zinc-100 ring-1 ring-zinc-700"
             >
-              Home
+              {t.home}
             </a>
             <a
               href="#top"
@@ -658,39 +1051,55 @@ export default function LevaniPortfolio() {
             </a>
           </div>
 
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-sm text-zinc-300">
-            {[
-              ["casino","Casino"],
-              ["sports","Sports"],
-              ["arqi","Arqi"],
-              ["events","Events & Clubs"],
-              ["slots","Slots"],
-              ["youtube","YouTube"],
-              ["fiverr","Fiverr"],
-              ["fantasy","Fantasy"],
-              ["experience","Experience"],
-              ["contact","Contact"],
-            ].map(([id,label]) => (
-              <a
-                key={id}
-                href={`#${id}`}
-                onClick={(e) => handleNavClick(e, id as string)}
-                className="px-2 py-1 rounded-lg text-zinc-300/90 hover:text-white hover:bg-white/5 ring-1 ring-transparent hover:ring-white/10 transition"
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <nav className="top-nav-links hidden md:flex items-center gap-1 lg:gap-2 text-sm text-zinc-300">
+              {navItems.map(({ id, label }) => (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  onClick={(e) => handleNavClick(e, id)}
+                  className="px-2 py-1 rounded-lg text-zinc-300/90 hover:text-white hover:bg-white/5 ring-1 ring-transparent hover:ring-white/10 transition"
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
 
-          <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="md:hidden inline-flex items-center gap-2 text-sm text-zinc-200">
-            Contact
-          </a>
+            <div className="lang-switch inline-flex items-center rounded-full bg-zinc-900/90 ring-1 ring-zinc-700 p-1">
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                className={`px-2.5 py-1 rounded-full text-xs sm:text-sm transition ${
+                  language === "en" ? "bg-zinc-100 text-zinc-900" : "text-zinc-200 hover:bg-zinc-800"
+                }`}
+                aria-pressed={language === "en"}
+                aria-label="Switch language to English"
+              >
+                🇺🇸 EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("ka")}
+                className={`px-2.5 py-1 rounded-full text-xs sm:text-sm transition ${
+                  language === "ka" ? "bg-zinc-100 text-zinc-900" : "text-zinc-200 hover:bg-zinc-800"
+                }`}
+                aria-pressed={language === "ka"}
+                aria-label="Switch language to Georgian"
+              >
+                🇬🇪 KA
+              </button>
+            </div>
+
+            <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="md:hidden inline-flex items-center gap-2 text-sm text-zinc-200">
+              {t.nav.contact}
+            </a>
+          </div>
         </div>
       </header>
 
       {/* ===== HERO re-layout: image on left, social card under image, title on right ===== */}
       <section
-        className="relative snap-start min-h-[88vh] md:min-h-[92vh] lg:min-h-screen flex items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-12 sm:pb-16 lg:pb-20 scroll-mt-20"
+        className="relative snap-start mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-8 sm:pb-10 lg:pb-12 scroll-mt-20"
         id="hero"
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
@@ -701,7 +1110,7 @@ export default function LevaniPortfolio() {
               target="_blank"
               rel="noreferrer"
               className="block relative overflow-hidden rounded-3xl ring-1 ring-zinc-800/80 group bg-zinc-900/40"
-              aria-label="Open intro video"
+              aria-label={t.labels.openIntroVideo}
             >
               <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover" />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
@@ -711,7 +1120,7 @@ export default function LevaniPortfolio() {
                 animate={{ scale: [1, 1.1, 1], rotate: [0, -3, 3, 0] }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
               >
-                <span className="rounded-full bg-black/70 text-white text-xs px-3 py-1 ring-1 ring-white/20 shadow-lg">Click it</span>
+                <span className="rounded-full bg-black/70 text-white text-xs px-3 py-1 ring-1 ring-white/20 shadow-lg">{t.labels.clickIt}</span>
               </motion.div>
             </a>
 
@@ -741,8 +1150,8 @@ export default function LevaniPortfolio() {
             </div>
 
             {/* Chips row like in your sketch, under socials */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["Senior Video Editor", "After Effects / Premiere Pro", "Casino / Sports / Slots", "Social Cutdowns"].map((chip) => (
+            <div className="hero-chip-list mt-4 flex flex-wrap gap-2">
+              {t.hero.chips.map((chip) => (
                 <Badge key={chip} className="rounded-full bg-zinc-900 text-zinc-200 ring-1 ring-zinc-800">
                   {chip}
                 </Badge>
@@ -752,26 +1161,38 @@ export default function LevaniPortfolio() {
 
           {/* RIGHT */}
           <div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
-              Video Editor & After Effects Specialist
+            <h1
+              className={`font-extrabold leading-tight ${
+                language === "ka" ? "hero-title text-3xl sm:text-4xl md:text-5xl" : "hero-title text-4xl sm:text-5xl md:text-6xl"
+              }`}
+            >
+              {t.hero.title}
             </h1>
-            <p className="mt-4 text-zinc-300 leading-relaxed max-w-xl">
-              I'm a senior video editor from Tbilisi who loves tech and innovative products. I craft sleek, platform-native promos for
-              casino, sports, slots, and fantasy. Capturing and editing video to its final form is my thing.
+            <p className={`hero-subtitle mt-4 text-zinc-300 leading-relaxed max-w-xl ${language === "ka" ? "text-base md:text-[1.04rem]" : ""}`}>
+              {t.hero.subtitle}
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a href="#casino" onClick={(e) => handleNavClick(e, "casino")}>
-                <Button className="rounded-2xl px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold bg-gradient-to-r from-[#9FA2FF] to-[#00FFC6] text-black/90 hover:from-[#B4B6FF] hover:to-[#2EFFD8] shadow-lg shadow-[#00FFC6]/20">
-                  View Work
+                <Button
+                  className={`rounded-2xl px-6 py-3 md:px-8 md:py-4 font-semibold bg-gradient-to-r from-[#9FA2FF] to-[#00FFC6] text-black/90 hover:from-[#B4B6FF] hover:to-[#2EFFD8] shadow-lg shadow-[#00FFC6]/20 ${
+                    language === "ka" ? "text-sm md:text-base" : "text-base md:text-lg"
+                  }`}
+                >
+                  {t.labels.viewWork}
                 </Button>
               </a>
               <a href="#contact" onClick={(e) => handleNavClick(e, "contact")}>
-                <Button variant="secondary" className="rounded-2xl px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold bg-zinc-900 text-white ring-1 ring-zinc-700 hover:ring-zinc-500 shadow-lg/40">
-                  Hire Me
+                <Button
+                  variant="secondary"
+                  className={`rounded-2xl px-6 py-3 md:px-8 md:py-4 font-semibold bg-zinc-900 text-white ring-1 ring-zinc-700 hover:ring-zinc-500 shadow-lg/40 ${
+                    language === "ka" ? "text-sm md:text-base" : "text-base md:text-lg"
+                  }`}
+                >
+                  {t.labels.hireMe}
                 </Button>
               </a>
-              <a href="tel:+995595551405" className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 ring-1 ring-white/15 text-white/90 hover:bg-black/60 hover:ring-white/25 transition">
-                <span className="text-xs uppercase tracking-widest text-white/60">Call</span>
+              <a href="tel:+995595551405" className="hero-call-pill inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 ring-1 ring-white/15 text-white/90 hover:bg-black/60 hover:ring-white/25 transition">
+                <span className="text-xs uppercase tracking-widest text-white/60">{t.labels.call}</span>
                 <span className="font-semibold">+995 595 55 14 05</span>
               </a>
             </div>
@@ -782,12 +1203,12 @@ export default function LevaniPortfolio() {
       <FlyingBadge sectionOrder={[...sectionOrder]} dropped={badgeDropped} onToggle={() => setBadgeDropped((v) => !v)} />
 
       {/* ==== REST OF YOUR PAGE UNCHANGED ==== */}
-      <Section id="casino" title="Casino" subtitle="Trailers, promos, bumpers and motion graphics for casino brands." badge="Portfolio">
-        <PortfolioGrid items={casinoItems} onSelect={setSelected} />
+      <Section id="casino" title={t.sections.casino.title} subtitle={t.sections.casino.subtitle} badge={t.sections.casino.badge} backToTopLabel={t.backToTop}>
+        <PortfolioGrid items={casinoItems} onSelect={setSelected} {...gridLabels} />
       </Section>
 
-      <Section id="sports" title="Sports" subtitle="Odds reels, hype edits, and event highlights.">
-        <PortfolioGrid items={sportsItems} onSelect={setSelected} />
+      <Section id="sports" title={t.sections.sports.title} subtitle={t.sections.sports.subtitle} backToTopLabel={t.backToTop}>
+        <PortfolioGrid items={sportsItems} onSelect={setSelected} {...gridLabels} />
         <div className="mt-6">
           <a
             href="https://www.behance.net/gallery/172080181/Sport-Poster-Designs-%28Football-Basketball-etc%29"
@@ -795,33 +1216,33 @@ export default function LevaniPortfolio() {
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900 px-4 py-3 text-sm ring-1 ring-zinc-800 hover:ring-zinc-600 transition"
           >
-            <span>See Sports Posters on Behance</span> <span>&rarr;</span>
+            <span>{t.labels.seeSportsPosters}</span> <span>&rarr;</span>
           </a>
         </div>
       </Section>
 
-      <Section id="arqi" title="Arqi" subtitle="Promos and edits for Arqi (vertical 9:16)." badge="New">
-        <PortfolioGrid items={arqiItems} onSelect={setSelected} />
+      <Section id="arqi" title={t.sections.arqi.title} subtitle={t.sections.arqi.subtitle} badge={t.sections.arqi.badge} backToTopLabel={t.backToTop}>
+        <PortfolioGrid items={arqiItems} onSelect={setSelected} {...gridLabels} />
       </Section>
 
-      <Section id="events" title="Events & Clubs" subtitle="Recaps, aftermovies, and club promos (vertical 9:16)." badge="New">
-        <PortfolioGrid items={eventsItems} onSelect={setSelected} />
+      <Section id="events" title={t.sections.events.title} subtitle={t.sections.events.subtitle} badge={t.sections.events.badge} backToTopLabel={t.backToTop}>
+        <PortfolioGrid items={eventsCarouselItems} onSelect={setSelected} {...gridLabels} />
       </Section>
 
-      <Section id="slots" title="Slots" subtitle="Feature teases and character-driven cutdowns for popular slot IPs.">
-        <PortfolioGrid items={slotsItems} onSelect={setSelected} />
+      <Section id="slots" title={t.sections.slots.title} subtitle={t.sections.slots.subtitle} backToTopLabel={t.backToTop}>
+        <PortfolioGrid items={slotsItems} onSelect={setSelected} {...gridLabels} />
       </Section>
 
-      <Section id="youtube" title="YouTube" subtitle="Latest edits and uploads from the VorNato channel." badge="Channel">
+      <Section id="youtube" title={t.sections.youtube.title} subtitle={t.sections.youtube.subtitle} badge={t.sections.youtube.badge} backToTopLabel={t.backToTop}>
         <div className="mb-8 flex items-center gap-4">
           <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden ring-4 ring-red-500/70 shadow-lg">
             <img src={YT_AVATAR_URL} alt="VorNato YouTube avatar" className="w-full h-full object-cover" />
           </div>
         </div>
-        <PortfolioGrid items={youtubeItems} onSelect={setSelected} />
+        <PortfolioGrid items={youtubeCarouselItems} onSelect={setSelected} {...gridLabels} />
       </Section>
 
-      <Section id="fiverr" title="Fiverr Work" subtitle="Hand-picked client pieces and repeat-order edits.">
+      <Section id="fiverr" title={t.sections.fiverr.title} subtitle={t.sections.fiverr.subtitle} backToTopLabel={t.backToTop}>
         <div className="grid grid-cols-1 gap-6">
           <a
             href="https://www.behance.net/gallery/143654417/Unboxing-video-samples-for-Fiverr"
@@ -834,50 +1255,48 @@ export default function LevaniPortfolio() {
             <div className="absolute bottom-0 p-4">
               <div className="flex items-center gap-2 text-zinc-200">
                 <Badge className="rounded-full bg-zinc-800/80">Fiverr</Badge>
-                <span className="font-semibold">Unboxing video samples (Fiverr)</span>
+                <span className="font-semibold">{t.labels.fiverrCard}</span>
               </div>
             </div>
           </a>
         </div>
       </Section>
 
-      <Section id="fantasy" title="Fantasy Games" subtitle="Stylized teasers and promo assets for fantasy titles.">
-        <PortfolioGrid items={fantasyItems} onSelect={setSelected} />
+      <Section id="fantasy" title={t.sections.fantasy.title} subtitle={t.sections.fantasy.subtitle} backToTopLabel={t.backToTop}>
+        <PortfolioGrid items={fantasyCarouselItems} onSelect={setSelected} {...gridLabels} />
       </Section>
 
-      <Section id="experience" title="Experience" subtitle="A quick look at my background and tools." badge="About">
+      <Section id="experience" title={t.sections.experience.title} subtitle={t.sections.experience.subtitle} badge={t.sections.experience.badge} backToTopLabel={t.backToTop}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             {/* Profile summary */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Profile</h3>
+              <h3 className="font-semibold mb-2">{t.experience.profileTitle}</h3>
               <p className="text-zinc-300">
-                Creative, performance-driven Senior Video Editor & Motion Designer (8+ years) crafting cinematic promos and brand stories. Expert with Adobe Creative Suite and 3D tools (Blender, Cinema 4D). Currently leading visual projects at Blue Planet Creative Solutions.
+                {t.experience.profileText}
               </p>
             </div>
 
             {/* Roles */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Roles</h3>
+              <h3 className="font-semibold mb-2">{t.experience.rolesTitle}</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>Blue Planet Creative Solutions — Video Editor / Team Leader (2021–Present)
-                  <span className="block text-zinc-400 text-sm">Led 200+ Amazon-compliant campaigns; streamlined post-production, improving turnaround by ~30%.</span>
-                </li>
-                <li>Freelancer (Fiverr, Upwork) — Senior Video Editor / Motion Designer (2017–2023)
-                  <span className="block text-zinc-400 text-sm">50+ international clients across e-commerce, gaming, and entertainment; consistent 5-star feedback.</span>
-                </li>
-                <li>Vornato YouTube — Content Creator & Editor (2015–2021)
-                  <span className="block text-zinc-400 text-sm">Grew to 28k+ subscribers and 1M+ total views through cinematic, story-driven edits.</span>
-                </li>
+                {t.experience.roles.map((role) => (
+                  <li key={role.title}>
+                    {role.title}
+                    {role.detail && <span className="block text-zinc-400 text-sm">{role.detail}</span>}
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Education */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Education</h3>
+              <h3 className="font-semibold mb-2">{t.experience.educationTitle}</h3>
               <ul className="space-y-2 text-zinc-300">
-                <li>Business & Technology University — BSc in Information Technologies</li>
-                <li>Udemy — Videography Course Certificate</li>
+                {t.experience.education.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -885,9 +1304,9 @@ export default function LevaniPortfolio() {
           <div className="space-y-6">
             {/* Skills */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Software & Skills</h3>
+              <h3 className="font-semibold mb-2">{t.experience.skillsTitle}</h3>
               <div className="flex flex-wrap gap-2">
-                {["After Effects", "Premiere Pro", "Photoshop", "Illustrator", "Blender", "Cinema 4D", "Color Grading", "Motion Design", "3D Visualization"].map((s) => (
+                {t.experience.skills.map((s) => (
                   <Badge key={s} className="rounded-full bg-zinc-800 text-zinc-200">
                     {s}
                   </Badge>
@@ -897,20 +1316,19 @@ export default function LevaniPortfolio() {
 
             {/* Achievements */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Achievements</h3>
+              <h3 className="font-semibold mb-2">{t.experience.achievementsTitle}</h3>
               <ul className="space-y-2 text-zinc-300 list-disc pl-5">
-                <li>Edited and delivered 200+ promotional/cinematic brand videos.</li>
-                <li>Top Rated freelancer on Fiverr with consistent 5-star feedback.</li>
-                <li>Produced Amazon-certified ad content surpassing 1M total views.</li>
-                <li>Led multi-editor projects, improving workflow speed and consistency.</li>
+                {t.experience.achievements.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
             </div>
 
             {/* Languages */}
             <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
-              <h3 className="font-semibold mb-2">Languages</h3>
+              <h3 className="font-semibold mb-2">{t.experience.languagesTitle}</h3>
               <div className="flex flex-wrap gap-2">
-                {["Georgian — Native", "English — Full Professional", "Russian — Professional Working"].map((l) => (
+                {t.experience.languages.map((l) => (
                   <Badge key={l} className="rounded-full bg-zinc-800 text-zinc-200">
                     {l}
                   </Badge>
@@ -921,11 +1339,11 @@ export default function LevaniPortfolio() {
         </div>
       </Section>
 
-      <Section id="contact" title="Contact" subtitle="Lets build something bold.">
+      <Section id="contact" title={t.sections.contact.title} subtitle={t.sections.contact.subtitle} backToTopLabel={t.backToTop}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
             <div className="space-y-1">
-              <div className="text-xs uppercase tracking-widest text-zinc-400">Email</div>
+              <div className="text-xs uppercase tracking-widest text-zinc-400">{t.labels.email}</div>
               <a href="mailto:levaniesitashvili1999@gmail.com" className="text-zinc-200 hover:underline">levaniesitashvili1999@gmail.com</a>
             </div>
           </div>
@@ -936,25 +1354,53 @@ export default function LevaniPortfolio() {
             rel="noopener noreferrer"
             className="md:col-span-2 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800 hover:ring-zinc-600 transition flex flex-col items-start gap-4"
           >
-            <img src={YT_COVER_URL} alt="YouTube channel cover" className="w-full aspect-[16/6] object-cover rounded-xl" loading="lazy" />
-            <Button className="rounded-2xl">YouTube Channel</Button>
+            <img src={YT_COVER_URL} alt={t.labels.youtubeCoverAlt} className="w-full aspect-[16/6] object-cover rounded-xl" loading="lazy" />
+            <Button className="rounded-2xl">{t.labels.youtubeChannel}</Button>
           </a>
 
           <div className="md:col-span-3 rounded-2xl bg-zinc-900 p-6 ring-1 ring-zinc-800">
             <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onContactSubmit}>
-              <input name="name" placeholder="Your name" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" />
-              <input name="contact" placeholder="Email or Telegram" className="rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none" />
+              <div>
+                <label htmlFor="contact-name" className="sr-only">
+                  {t.contact.nameLabel}
+                </label>
+                <input
+                  id="contact-name"
+                  name="name"
+                  autoComplete="name"
+                  placeholder={t.contact.namePlaceholder}
+                  className="w-full rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
+                />
+              </div>
+              <div>
+                <label htmlFor="contact-contact" className="sr-only">
+                  {t.contact.contactLabel}
+                </label>
+                <input
+                  id="contact-contact"
+                  name="contact"
+                  autoComplete="email"
+                  placeholder={t.contact.contactPlaceholder}
+                  className="w-full rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="contact-message" className="sr-only">
+                  {t.contact.messageLabel}
+                </label>
               <textarea
+                id="contact-message"
                 name="message"
-                placeholder="Project details"
-                className="sm:col-span-2 rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]"
+                placeholder={t.contact.messagePlaceholder}
+                className="w-full rounded-xl bg-zinc-950 p-3 ring-1 ring-zinc-800 focus:ring-zinc-600 outline-none min-h-[120px]"
               />
+              </div>
               <Button className="sm:col-span-2 rounded-2xl" type="submit">
-                Send
+                {t.labels.send}
               </Button>
             </form>
             <p className="mt-3 text-xs text-zinc-400">
-              Submitting opens your email client with the details pre-filled. For instant chat, DM me on YouTube or email directly.
+              {t.contact.note}
             </p>
           </div>
         </div>
@@ -967,7 +1413,7 @@ export default function LevaniPortfolio() {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <div className="relative w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
             <button className="absolute -top-10 right-0 text-zinc-300 hover:text-white" onClick={() => setSelected(null)}>
-              Close
+              {t.labels.close}
             </button>
             {selected.provider === "youtube" && selected.embedId ? (
               <div className="w-full aspect-video">
@@ -993,7 +1439,7 @@ export default function LevaniPortfolio() {
                 } w-full bg-zinc-900 rounded-xl ring-1 ring-zinc-800 flex items-center justify-center text-zinc-400`}
               >
                 <a href={selected.href || "#"} target="_blank" rel="noreferrer" className="underline">
-                  Open project
+                  {t.labels.openProject}
                 </a>
               </div>
             )}

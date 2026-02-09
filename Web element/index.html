@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Futuristic Video Slider</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <section class="slider-section" id="slider">
+      <div class="swiper slider">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" data-video-src="https://www.youtube.com/embed/aqz-KE-bpKQ">
+            <div class="video-frame">
+              <iframe src="" data-src="https://www.youtube.com/embed/aqz-KE-bpKQ?rel=0&modestbranding=1&playsinline=1"
+                title="Big Buck Bunny" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="slide-caption">
+              <span class="chip">Orbital</span>
+              <h3>Big Buck Bunny</h3>
+              <p>Open source short film demo.</p>
+            </div>
+            <div class="slide-play" aria-hidden="true"></div>
+          </div>
+          <div class="swiper-slide" data-video-src="https://www.youtube.com/embed/ScMzIvxBSi4">
+            <div class="video-frame">
+              <iframe src="" data-src="https://www.youtube.com/embed/ScMzIvxBSi4?rel=0&modestbranding=1&playsinline=1"
+                title="Big Buck Bunny Clip" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="slide-caption">
+              <span class="chip">Signal</span>
+              <h3>Orbit Skim</h3>
+              <p>Short looped sequence for mood.</p>
+            </div>
+            <div class="slide-play" aria-hidden="true"></div>
+          </div>
+          <div class="swiper-slide" data-video-src="https://www.youtube.com/embed/YE7VzlLtp-4">
+            <div class="video-frame">
+              <iframe src="" data-src="https://www.youtube.com/embed/YE7VzlLtp-4?rel=0&modestbranding=1&playsinline=1"
+                title="Sintel Trailer" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="slide-caption">
+              <span class="chip">Pulse</span>
+              <h3>Sintel Trailer</h3>
+              <p>Futuristic energy in motion.</p>
+            </div>
+            <div class="slide-play" aria-hidden="true"></div>
+          </div>
+          <div class="swiper-slide" data-video-src="https://www.youtube.com/embed/aqz-KE-bpKQ?start=30">
+            <div class="video-frame">
+              <iframe src="" data-src="https://www.youtube.com/embed/aqz-KE-bpKQ?start=30&rel=0&modestbranding=1&playsinline=1"
+                title="Cinematic Flight" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="slide-caption">
+              <span class="chip">Vector</span>
+              <h3>Cinematic Flight</h3>
+              <p>Gliding through a reactive sky.</p>
+            </div>
+            <div class="slide-play" aria-hidden="true"></div>
+          </div>
+          <div class="swiper-slide" data-video-src="https://www.youtube.com/embed/M7lc1UVf-VE">
+            <div class="video-frame">
+              <iframe src="" data-src="https://www.youtube.com/embed/M7lc1UVf-VE?rel=0&modestbranding=1&playsinline=1"
+                title="API Playground" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="slide-caption">
+              <span class="chip">Core</span>
+              <h3>API Playground</h3>
+              <p>Classic YouTube demo feed.</p>
+            </div>
+            <div class="slide-play" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-backdrop" aria-hidden="true"></div>
+    <div class="lightbox-content" role="dialog" aria-modal="true" aria-label="Video playback">
+      <button class="close-button" type="button" aria-label="Close video">&times;</button>
+      <div class="lightbox-warning" role="status" aria-live="polite">
+        Video playback needs an http:// or https:// server. The file:// scheme blocks YouTube embeds.
+      </div>
+      <div class="lightbox-video">
+        <iframe id="lightbox-frame" src=""
+          title="Video player" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
