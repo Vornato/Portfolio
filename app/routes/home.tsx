@@ -28,6 +28,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 const YT_AVATAR_URL = `${import.meta.env.BASE_URL}profile.jpg`;
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
+const MOTION_PRESET_URL = `${import.meta.env.BASE_URL}Motion preset.mp4`;
 
 const quickLinks = [
   { label: "Email", href: "mailto:levaniesitashvili1999@gmail.com" },
@@ -539,166 +540,124 @@ const PortfolioGrid: React.FC<{ items: PortfolioItem[]; onSelect?: (item: Portfo
   );
 };
 
-const BASE_GEAR_DURATIONS = [36, 28, 22];
-
-function useScrollSpeed() {
-  const [speed, setSpeed] = React.useState(0.12);
-  const last = React.useRef({ y: 0, t: performance.now() });
-  const decayTimer = React.useRef<number | null>(null);
+const ScrollVideoBackground: React.FC = () => {
+  const videoRef = React.useRef<HTMLVideoElement | null>(null);
+  const progressRef = React.useRef<HTMLDivElement | null>(null);
+  const layerRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      const t = performance.now();
-      const dy = Math.abs(y - last.current.y);
-      const dt = Math.max(16, t - last.current.t);
-      last.current = { y, t };
-      const instant = Math.min(1, dy / dt / 2);
-      setSpeed((s) => Math.max(instant, s));
-      if (decayTimer.current == null) {
-        decayTimer.current = window.setInterval(() => {
-          setSpeed((s) => {
-            const next = s * 0.85 + 0.018;
-            if (next <= 0.121) {
-              if (decayTimer.current) {
-                clearInterval(decayTimer.current);
-                decayTimer.current = null;
-              }
-              return 0.12;
-            }
-            return next;
-          });
-        }, 120);
+    const bgVideo = videoRef.current;
+    const scrollProgress = progressRef.current;
+    const layer = layerRef.current;
+    if (!bgVideo) return;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+    const lerp = (current: number, target: number, factor: number) => current + (target - current) * factor;
+    const getScrollRatio = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0) return 0;
+      return clamp(window.scrollY / maxScroll, 0, 1);
+    };
+
+    let targetScrollRatio = getScrollRatio();
+    let videoReady = false;
+    let videoDuration = 0;
+    let smoothVideoTime = 0;
+    let lastVideoCommitMs = 0;
+    let rafId = 0;
+
+    const updateScrollProgress = () => {
+      targetScrollRatio = getScrollRatio();
+      if (scrollProgress) {
+        scrollProgress.style.width = `${Math.round(targetScrollRatio * 10000) / 100}%`;
       }
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (decayTimer.current) {
-        clearInterval(decayTimer.current);
-        decayTimer.current = null;
+
+    const initializeVideo = () => {
+      const nativeWidth = bgVideo.videoWidth || 1920;
+      const nativeHeight = bgVideo.videoHeight || 1080;
+      if (layer) {
+        layer.style.setProperty("--video-native-width", `${nativeWidth}`);
+        layer.style.setProperty("--video-native-height", `${nativeHeight}`);
       }
+
+      videoDuration = Number.isFinite(bgVideo.duration) ? bgVideo.duration : 0;
+      videoReady = videoDuration > 0;
+      smoothVideoTime = targetScrollRatio * videoDuration;
+      lastVideoCommitMs = 0;
+      if (videoReady) {
+        bgVideo.currentTime = smoothVideoTime;
+      }
+    };
+
+    const handlePlay = () => {
+      bgVideo.pause();
+    };
+
+    bgVideo.pause();
+    bgVideo.loop = false;
+    bgVideo.removeAttribute("autoplay");
+
+    if (bgVideo.readyState >= 1) {
+      initializeVideo();
+    } else {
+      bgVideo.addEventListener("loadedmetadata", initializeVideo, { once: true });
+    }
+
+    bgVideo.addEventListener("play", handlePlay);
+    updateScrollProgress();
+    window.addEventListener("scroll", updateScrollProgress, { passive: true });
+    window.addEventListener("resize", updateScrollProgress);
+
+    const animateMotion = (now: number) => {
+      if (videoReady) {
+        const targetVideoTime = targetScrollRatio * videoDuration;
+
+        if (prefersReducedMotion) {
+          smoothVideoTime = targetVideoTime;
+        } else {
+          smoothVideoTime = lerp(smoothVideoTime, targetVideoTime, 0.28);
+          if (Math.abs(targetVideoTime - smoothVideoTime) < 0.0015) {
+            smoothVideoTime = targetVideoTime;
+          }
+        }
+
+        const delta = Math.abs(bgVideo.currentTime - smoothVideoTime);
+        const commitInterval = prefersReducedMotion ? 1000 / 24 : 1000 / 42;
+        const readyToCommit = now - lastVideoCommitMs >= commitInterval;
+        const forceCommit = delta > 0.11;
+
+        if ((readyToCommit || forceCommit) && !bgVideo.seeking && delta > 0.008) {
+          bgVideo.currentTime = smoothVideoTime;
+          lastVideoCommitMs = now;
+        }
+      }
+
+      rafId = window.requestAnimationFrame(animateMotion);
+    };
+
+    rafId = window.requestAnimationFrame(animateMotion);
+
+    return () => {
+      window.removeEventListener("scroll", updateScrollProgress);
+      window.removeEventListener("resize", updateScrollProgress);
+      bgVideo.removeEventListener("play", handlePlay);
+      window.cancelAnimationFrame(rafId);
     };
   }, []);
 
-  return speed;
-}
-
-const GearSVG: React.FC<{ size: number; teeth?: number; stroke?: string }> = ({ size, teeth = 8, stroke = "rgba(153,153,255,0.55)" }) => {
-  const r = size / 2;
-  const inner = r * 0.45;
-  const outer = r * 0.9;
-  const center = r;
-  const pts: string[] = [];
-  for (let i = 0; i < teeth * 2; i++) {
-    const a = (i / (teeth * 2)) * Math.PI * 2;
-    const rad = i % 2 === 0 ? outer : inner;
-    pts.push(`${center + Math.cos(a) * rad},${center + Math.sin(a) * rad}`);
-  }
-  const path = `M ${pts[0]} L ${pts.slice(1).join(" ")} Z`;
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none">
-      <path d={path} stroke={stroke} strokeWidth={2} fill="rgba(0,0,0,0.25)" />
-      <circle cx={center} cy={center} r={inner * 0.52} stroke={stroke} strokeWidth={2} fill="rgba(153,153,255,0.07)" />
-    </svg>
-  );
-};
-
-const BackgroundMotion: React.FC = () => {
-  const speed = useScrollSpeed();
-  const { scrollYProgress } = useScroll();
-  const driftX = useTransform(scrollYProgress, [0, 1], ["0vw", "-12vw"]);
-  const driftY = useTransform(scrollYProgress, [0, 1], ["0vh", "8vh"]);
-  const dur = BASE_GEAR_DURATIONS.map((base) => base / (0.4 + speed));
-
-  return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      <motion.div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(1200px 800px at 20% 30%, rgba(153,153,255,0.30), transparent 60%), radial-gradient(1200px 900px at 80% 70%, rgba(0,255,198,0.22), transparent 60%), #0B0B13",
-          backgroundSize: "220% 220%",
-        }}
-        animate={{ backgroundPosition: ["0% 0%", "100% 40%", "0% 100%", "0% 0%"] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      />
-
-      <motion.div
-        className="absolute -top-52 -left-48 h-[60vmax] w-[60vmax] rounded-full bg-gradient-to-br from-[#9FA2FF]/25 to-[#00FFC6]/15 blur-3xl"
-        style={{ x: driftX, y: driftY }}
-        animate={{ rotate: 360, scale: [1, 1.05, 1] }}
-        transition={{ duration: 60 / (0.4 + speed), repeat: Infinity, ease: "linear" }}
-      />
-      <motion.div
-        className="absolute -bottom-60 -right-52 h-[55vmax] w-[55vmax] rounded-full bg-gradient-to-tr from-[#00FFC6]/22 to-[#9FA2FF]/14 blur-3xl"
-        style={{ x: useTransform(driftX, (v) => (typeof v === "string" ? v : 0)), y: useTransform(driftY, (v) => (typeof v === "string" ? v : 0)) }}
-        animate={{ rotate: -360, scale: [1.03, 0.98, 1.03] }}
-        transition={{ duration: 48 / (0.4 + speed), repeat: Infinity, ease: "linear" }}
-      />
-
-      <motion.div className="absolute left-[8vw] top-[14vh] opacity-90">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: dur[0], repeat: Infinity, ease: "linear" }}>
-          <GearSVG size={240} teeth={12} />
-        </motion.div>
-      </motion.div>
-      <motion.div className="absolute right-[10vw] top-[22vh] opacity-85">
-        <motion.div animate={{ rotate: -360 }} transition={{ duration: dur[1], repeat: Infinity, ease: "linear" }}>
-          <GearSVG size={180} teeth={10} />
-        </motion.div>
-      </motion.div>
-      <motion.div className="absolute left-[18vw] bottom-[12vh] opacity-80">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: dur[2], repeat: Infinity, ease: "linear" }}>
-          <GearSVG size={140} teeth={8} />
-        </motion.div>
-      </motion.div>
-
-      <motion.div className="absolute right-[10vw] top-[22vh]" style={{ translateX: -24, translateY: 84 }}>
-        <div className="w-44 h-[2px] bg-white/15" />
-      </motion.div>
-
-      {[...Array(12)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{
-            top: `${6 + ((i * 8) % 86)}%`,
-            left: `${(i * 11) % 92}%`,
-          }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: (18 + i * 1.2) / (0.4 + speed), repeat: Infinity, ease: "linear" }}
-        >
-          <motion.div
-            className="border border-white/14 rounded-xl"
-            style={{ width: 70 + ((i % 4) * 28), height: 70 + (((i + 2) % 4) * 28) }}
-            animate={{ x: [0, i % 2 ? 70 : -70, 0], y: [0, i % 2 ? -50 : 50, 0] }}
-            transition={{ duration: 12 + i * 0.8, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </motion.div>
-      ))}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={`ring-${i}`}
-          className="absolute"
-          style={{ top: `${15 + i * 12}%`, left: `${20 + ((i * 9) % 60)}%` }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: (22 + i) / (0.4 + speed), repeat: Infinity, ease: "linear" }}
-        >
-          <motion.div
-            animate={{ scale: [0.85, 1.12, 0.85], opacity: [0.25, 0.45, 0.25] }}
-            transition={{ duration: 10 + i, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="rounded-full" style={{ width: 140 - i * 12, height: 140 - i * 12, boxShadow: "0 0 0 2px rgba(255,255,255,0.10) inset" }} />
-          </motion.div>
-        </motion.div>
-      ))}
-      <motion.div
-        className="absolute inset-0 opacity-[0.05]"
-        style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.9) 1px, transparent 1px)", backgroundSize: "10px 10px" }}
-        animate={{ opacity: [0.03, 0.07, 0.04, 0.05], x: [0, -20, 10, 0], y: [0, 12, -12, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
+    <>
+      <div ref={progressRef} className="scroll-progress" aria-hidden="true" />
+      <div ref={layerRef} className="video-bg" aria-hidden="true">
+        <video ref={videoRef} className="video-bg-media" muted playsInline preload="auto">
+          <source src={MOTION_PRESET_URL} type="video/mp4" />
+        </video>
+        <div className="video-bg-overlay" />
+      </div>
+    </>
   );
 };
 
@@ -1024,8 +983,8 @@ export default function LevaniPortfolio() {
   };
 
   return (
-    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-proximity bg-[#0B0B13]">
-      <BackgroundMotion />
+    <main id="top" className="relative z-10 min-h-screen w-full text-white snap-y snap-proximity bg-transparent">
+      <ScrollVideoBackground />
 
       {toast && (
         <div className={`fixed top-16 left-1/2 -translate-x-1/2 z-50 rounded-xl px-4 py-2 text-sm shadow-lg ring-1 ${toastKind === "error" ? "bg-red-600/90 ring-red-300/40" : toastKind === "success" ? "bg-emerald-600/90 ring-emerald-300/40" : "bg-zinc-800/90 ring-zinc-300/40"}`}>
@@ -1449,6 +1408,8 @@ export default function LevaniPortfolio() {
     </main>
   );
 }
+
+
 
 
 
