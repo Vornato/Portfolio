@@ -28,7 +28,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 const YT_AVATAR_URL = `${import.meta.env.BASE_URL}profile.jpg`;
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
-const MOTION_PRESET_URL = `${import.meta.env.BASE_URL}Motion preset.mp4`;
+const MOTION_PRESET_URL = `${import.meta.env.BASE_URL}motion-preset.mp4`;
 
 const quickLinks = [
   { label: "Email", href: "mailto:levaniesitashvili1999@gmail.com" },
