@@ -29,6 +29,7 @@ const PHOTO_URL = `${import.meta.env.BASE_URL}Mainc.png`;
 const YT_AVATAR_URL = `${import.meta.env.BASE_URL}profile.jpg`;
 const YT_COVER_URL = `${import.meta.env.BASE_URL}youtube-cover.png`;
 const MOTION_PRESET_URL = `${import.meta.env.BASE_URL}motion-preset.mp4`;
+const DESKTOP_VIDEO_QUERY = "(min-width: 768px)";
 
 const quickLinks = [
   { label: "Email", href: "mailto:levaniesitashvili1999@gmail.com" },
@@ -107,7 +108,15 @@ const ui = {
       fiverr: { title: "Fiverr Work", subtitle: "Hand-picked client pieces and repeat-order edits.", badge: "" },
       fantasy: { title: "Fantasy Games", subtitle: "Stylized teasers and promo assets for fantasy titles.", badge: "" },
       experience: { title: "Experience", subtitle: "A quick look at my background and tools.", badge: "About" },
-      contact: { title: "Contact", subtitle: "Lets build something bold.", badge: "" },
+      contact: { title: "Contact", subtitle: "Let's build something bold.", badge: "" },
+    },
+    proof: {
+      stats: [
+        { value: "8+", label: "Years editing" },
+        { value: "200+", label: "Campaigns delivered" },
+        { value: "Top Rated", label: "Fiverr freelancer" },
+        { value: "28k+", label: "YouTube audience" },
+      ],
     },
     experience: {
       profileTitle: "Profile",
@@ -214,6 +223,14 @@ const ui = {
       experience: { title: "გამოცდილება", subtitle: "ჩემი გამოცდილებისა და ინსტრუმენტების მოკლე მიმოხილვა.", badge: "შესახებ" },
       contact: { title: "კონტაქტი", subtitle: "მოდი, ერთად შევქმნათ რაღაც გამორჩეული.", badge: "" },
     },
+    proof: {
+      stats: [
+        { value: "8+", label: "წელი მონტაჟში" },
+        { value: "200+", label: "ჩაბარებული კამპანია" },
+        { value: "Top Rated", label: "Fiverr ფრილანსერი" },
+        { value: "28k+", label: "YouTube აუდიტორია" },
+      ],
+    },
     experience: {
       profileTitle: "პროფილი",
       profileText:
@@ -282,6 +299,8 @@ const arqiItems: PortfolioItem[] = [
   { title: "Archi Short 4", tag: "Archi", provider: "youtube", embedId: "ashI2x3fJcI", poster: "https://img.youtube.com/vi/ashI2x3fJcI/maxresdefault.jpg", orientation: "vertical" },
   { title: "Archi Short 5", tag: "Archi", provider: "youtube", embedId: "8PAjRGUR_nk", poster: "https://img.youtube.com/vi/8PAjRGUR_nk/maxresdefault.jpg", orientation: "vertical" },
   { title: "Archi Short 6", tag: "Archi", provider: "youtube", embedId: "X2THCukSVrE", poster: "https://img.youtube.com/vi/X2THCukSVrE/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 7", tag: "Archi", provider: "youtube", embedId: "1tndiCtNBb4", poster: "https://img.youtube.com/vi/1tndiCtNBb4/maxresdefault.jpg", orientation: "vertical" },
+  { title: "Archi Short 8", tag: "Archi", provider: "youtube", embedId: "zzFGu8wbxL8", poster: "https://img.youtube.com/vi/zzFGu8wbxL8/maxresdefault.jpg", orientation: "vertical" },
 ];
 
 const casinoItems: PortfolioItem[] = [
@@ -349,6 +368,26 @@ const fantasyCarouselItems = normalizeCarouselItems(fantasyItems);
 
 const sectionOrder = ["hero", "casino", "sports", "arqi", "events", "slots", "youtube", "fiverr", "fantasy", "experience", "contact"] as const;
 
+function useMediaQuery(query: string, initial = false) {
+  const [matches, setMatches] = React.useState(initial);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia(query);
+    const update = () => setMatches(media.matches);
+
+    update();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", update);
+      return () => media.removeEventListener("change", update);
+    }
+    media.addListener(update);
+    return () => media.removeListener(update);
+  }, [query]);
+
+  return matches;
+}
+
 const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: string; backToTopLabel?: string; children: React.ReactNode }> = ({
   id,
   title,
@@ -368,7 +407,7 @@ const Section: React.FC<{ id: string; title: string; subtitle?: string; badge?: 
           <h2 className="section-title text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">{title}</h2>
           {subtitle && <p className="section-subtitle mt-2 text-zinc-300 max-w-2xl leading-relaxed">{subtitle}</p>}
         </div>
-        <a href="#top" onClick={(e) => handleNavClick(e, "top")} className="md:inline-flex items-center text-zinc-400 hover:text-white text-sm">
+        <a href="#top" onClick={(e) => handleNavClick(e, "top")} className="hidden md:inline-flex items-center text-zinc-400 hover:text-white text-sm">
           {backToTopLabel}
         </a>
       </div>
@@ -544,10 +583,34 @@ const ScrollVideoBackground: React.FC = () => {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const progressRef = React.useRef<HTMLDivElement | null>(null);
   const layerRef = React.useRef<HTMLDivElement | null>(null);
+  const shouldRenderVideo = useMediaQuery(DESKTOP_VIDEO_QUERY);
 
   React.useEffect(() => {
-    const bgVideo = videoRef.current;
     const scrollProgress = progressRef.current;
+    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+    const getScrollRatio = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0) return 0;
+      return clamp(window.scrollY / maxScroll, 0, 1);
+    };
+    const updateScrollProgress = () => {
+      if (scrollProgress) {
+        scrollProgress.style.width = `${Math.round(getScrollRatio() * 10000) / 100}%`;
+      }
+    };
+
+    updateScrollProgress();
+    window.addEventListener("scroll", updateScrollProgress, { passive: true });
+    window.addEventListener("resize", updateScrollProgress);
+    return () => {
+      window.removeEventListener("scroll", updateScrollProgress);
+      window.removeEventListener("resize", updateScrollProgress);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (!shouldRenderVideo) return;
+    const bgVideo = videoRef.current;
     const layer = layerRef.current;
     if (!bgVideo) return;
 
@@ -568,11 +631,8 @@ const ScrollVideoBackground: React.FC = () => {
     let lastVideoCommitMs = 0;
     let rafId = 0;
 
-    const updateScrollProgress = () => {
+    const updateTargetScrollRatio = () => {
       targetScrollRatio = getScrollRatio();
-      if (scrollProgress) {
-        scrollProgress.style.width = `${Math.round(targetScrollRatio * 10000) / 100}%`;
-      }
     };
 
     const initializeVideo = () => {
@@ -607,9 +667,9 @@ const ScrollVideoBackground: React.FC = () => {
     }
 
     bgVideo.addEventListener("play", handlePlay);
-    updateScrollProgress();
-    window.addEventListener("scroll", updateScrollProgress, { passive: true });
-    window.addEventListener("resize", updateScrollProgress);
+    updateTargetScrollRatio();
+    window.addEventListener("scroll", updateTargetScrollRatio, { passive: true });
+    window.addEventListener("resize", updateTargetScrollRatio);
 
     const animateMotion = (now: number) => {
       if (videoReady) {
@@ -641,43 +701,32 @@ const ScrollVideoBackground: React.FC = () => {
     rafId = window.requestAnimationFrame(animateMotion);
 
     return () => {
-      window.removeEventListener("scroll", updateScrollProgress);
-      window.removeEventListener("resize", updateScrollProgress);
+      window.removeEventListener("scroll", updateTargetScrollRatio);
+      window.removeEventListener("resize", updateTargetScrollRatio);
       bgVideo.removeEventListener("play", handlePlay);
+      bgVideo.removeEventListener("loadedmetadata", initializeVideo);
       window.cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [shouldRenderVideo]);
 
   return (
     <>
       <div ref={progressRef} className="scroll-progress" aria-hidden="true" />
-      <div ref={layerRef} className="video-bg" aria-hidden="true">
-        <video ref={videoRef} className="video-bg-media" muted playsInline preload="auto">
-          <source src={MOTION_PRESET_URL} type="video/mp4" />
-        </video>
-        <div className="video-bg-overlay" />
-      </div>
+      <div className="mobile-ambient-bg" aria-hidden="true" />
+      {shouldRenderVideo && (
+        <div ref={layerRef} className="video-bg" aria-hidden="true">
+          <video ref={videoRef} className="video-bg-media" muted playsInline preload="metadata">
+            <source src={MOTION_PRESET_URL} type="video/mp4" />
+          </video>
+          <div className="video-bg-overlay" />
+        </div>
+      )}
     </>
   );
 };
 
-const EdgeArrows: React.FC = () => (
-  <motion.div className="pointer-events-none absolute inset-0" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 12, ease: "linear" }}>
-    {[
-      { top: "8%", left: "50%", transform: "translate(-50%, 0) rotate(0deg)" },
-      { top: "50%", left: "92%", transform: "translate(0, -50%) rotate(90deg)" },
-      { top: "92%", left: "50%", transform: "translate(-50%, -100%) rotate(180deg)" },
-      { top: "50%", left: "8%", transform: "translate(-100%, -50%) rotate(-90deg)" },
-    ].map((pos, i) => (
-      <div key={i} className="absolute text-white/80 drop-shadow" style={pos as any}>
-        <div className="flex gap-1 text-xl"><span>ÃƒÂ¢Ã…Â¾Ã‚Â¤</span><span>ÃƒÂ¢Ã…Â¾Ã‚Â¤</span><span>ÃƒÂ¢Ã…Â¾Ã‚Â¤</span></div>
-      </div>
-    ))}
-  </motion.div>
-);
-
 const EdgeArrowsClean: React.FC = () => (
-  <motion.div className="pointer-events-none absolute inset-0" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 12, ease: "linear" }}>
+  <motion.div aria-hidden="true" className="edge-arrows-clean pointer-events-none absolute inset-0" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 12, ease: "linear" }}>
     {[
       { top: "8%", left: "50%", transform: "translate(-50%, 0) rotate(0deg)" },
       { top: "50%", left: "92%", transform: "translate(0, -50%) rotate(90deg)" },
@@ -750,19 +799,6 @@ const FlyingBadge: React.FC<{
   const rotate = useTransform(scrollYProgress, input, rotVals);
   const scale = useTransform(scrollYProgress, input, scaleVals);
 
-  const labels: Record<string, React.ReactNode> = {
-    hero: <span className="text-[#9999FF]">Ae</span>,
-    casino: <span aria-label="casino">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â²</span>,
-    sports: <span aria-label="sports">ÃƒÂ°Ã…Â¸Ã‚ÂÃ¢â‚¬Â </span>,
-    events: <span aria-label="events">ÃƒÂ°Ã…Â¸Ã…Â½Ã¢â‚¬Â°</span>,
-    slots: <span aria-label="slots">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â°</span>,
-    youtube: <span aria-label="youtube">ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â¶ÃƒÂ¯Ã‚Â¸Ã‚Â</span>,
-    fiverr: <span aria-label="fiverr">ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¼</span>,
-    fantasy: <span aria-label="fantasy">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â®</span>,
-    experience: <span aria-label="experience">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬</span>,
-    contact: <span aria-label="contact">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â°ÃƒÂ¯Ã‚Â¸Ã‚Â</span>,
-  };
-
   const emojiBySection: Record<string, string[]> = {
   hero: ["AE", "🎬", "🎯", "🪄", "🌀"],
   casino: ["🎰", "🎲", "🃏", "💰"],
@@ -801,8 +837,8 @@ const FlyingBadge: React.FC<{
     }));
   }, [currentKey]);
   const containerClass = dropped
-    ? "fixed left-[100px] bottom-6 z-30"
-    : "fixed left-[100px] top-1/2 z-30 -translate-y-1/2";
+    ? "floating-badge fixed left-[100px] bottom-6 z-30"
+    : "floating-badge fixed left-[100px] top-1/2 z-30 -translate-y-1/2";
 
   // BIGGER BADGE + ICON
   return (
@@ -1056,6 +1092,16 @@ export default function LevaniPortfolio() {
         </div>
       </header>
 
+      <nav className="mobile-section-nav md:hidden" aria-label="Portfolio sections">
+        <div className="mobile-section-nav-scroll">
+          {navItems.map(({ id, label }) => (
+            <a key={id} href={`#${id}`} onClick={(e) => handleNavClick(e, id)} className="mobile-section-link">
+              {label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
       {/* ===== HERO re-layout: image on left, social card under image, title on right ===== */}
       <section
         className="relative snap-start mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-8 sm:pb-10 lg:pb-12 scroll-mt-20"
@@ -1068,10 +1114,10 @@ export default function LevaniPortfolio() {
               href="https://youtu.be/pPaX34rLRHY"
               target="_blank"
               rel="noreferrer"
-              className="block relative overflow-hidden rounded-3xl ring-1 ring-zinc-800/80 group bg-zinc-900/40"
+              className="hero-portrait-card block relative overflow-hidden rounded-3xl ring-1 ring-zinc-800/80 group bg-zinc-900/40"
               aria-label={t.labels.openIntroVideo}
             >
-              <img src={PHOTO_URL} alt="Levani portrait" className="w-full object-cover" />
+              <img src={PHOTO_URL} alt="Levani portrait" className="hero-portrait-image w-full object-cover" />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[#9999FF]/10 via-transparent to-[#00FFC6]/10" />
               <EdgeArrowsClean />
               <motion.div
@@ -1130,7 +1176,15 @@ export default function LevaniPortfolio() {
             <p className={`hero-subtitle mt-4 text-zinc-300 leading-relaxed max-w-xl ${language === "ka" ? "text-base md:text-[1.04rem]" : ""}`}>
               {t.hero.subtitle}
             </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="hero-proof-grid" aria-label="Career highlights">
+              {t.proof.stats.map((stat) => (
+                <div key={`${stat.value}-${stat.label}`} className="hero-proof-card">
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="hero-action-row mt-6 flex flex-wrap items-center gap-3">
               <a href="#casino" onClick={(e) => handleNavClick(e, "casino")}>
                 <Button
                   className={`rounded-2xl px-6 py-3 md:px-8 md:py-4 font-semibold bg-gradient-to-r from-[#9FA2FF] to-[#00FFC6] text-black/90 hover:from-[#B4B6FF] hover:to-[#2EFFD8] shadow-lg shadow-[#00FFC6]/20 ${
